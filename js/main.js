@@ -80,24 +80,24 @@ class Application {
         this.portalManager = new PortalManager(window,this.scene,this.renderer,this.camera);
 
 
-        // Loading Bar
-        const progressBar = document.getElementById('progress-bar');
-        loadingManager.onProgress = function (url, loaded, total) {
-            progressBar.value = (loaded / total) * 100;
-        }
-        const progressBarContainer = document.querySelector('.progress-bar-container');
-        loadingManager.onLoad = function () {
-            progressBarContainer.style.display = 'none';
-        }
+        // // Loading Bar
+        // const progressBar = document.getElementById('progress-bar');
+        // loadingManager.onProgress = function (url, loaded, total) {
+        //     progressBar.value = (loaded / total) * 100;
+        // }
+        // const progressBarContainer = document.querySelector('.progress-bar-container');
+        // loadingManager.onLoad = function () {
+        //     progressBarContainer.style.display = 'none';
+        // }
 
         // Stats
         this.stats = Stats()
         document.body.appendChild(this.stats.dom)
 
         // Controls
-        this.controls = new FirstPersonControls(this.camera, this.renderer.domElement);
-        this.scene.add(this.controls.getObject());
-        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        // this.controls = new FirstPersonControls(this.camera, this.renderer.domElement);
+        // this.scene.add(this.controls.getObject());
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     }
 
     render() {
@@ -155,11 +155,11 @@ class Application {
 
 let app = new Application();
 let objs = [
-    new Skybox({width:2000, height:2000, depth:2000},{x:0, y:300, z:0}),
-    new Jardim({x:0, y:0, z:0}),
+    // new Skybox({width:2000, height:2000, depth:2000},{x:0, y:300, z:0}),
+    // new Jardim({x:0, y:0, z:0}),
     new PortalCreator({width:20,height:28},{x:-20,y:15,z:-150},0x5b723c, "p_1","p_2"),
     new PortalCreator({width:20,height:28},{x:-80,y:15,z:30},0xff0000, "p_2","p_1"),
-    new Boneco({x:30, y:0, z:40}, {x:0, y:0, z:0})
+    // new Boneco({x:30, y:0, z:40}, {x:0, y:0, z:0})
 
 ];
 
