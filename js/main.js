@@ -29,49 +29,49 @@ class Application {
             antialias: true,
             powerPreference: "high-performance",
         });
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        // this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.autoClear = false;
         this.renderer.info.autoReset = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.VSMShadowMap;
-        this.renderer.physicallyCorrectLights = true;
+        // this.renderer.shadowMap.enabled = true;
+        // this.renderer.shadowMap.type = THREE.VSMShadowMap;
+        // this.renderer.physicallyCorrectLights = true;
         this.renderer.setClearColor(0xcccccc);
         document.body.appendChild(this.renderer.domElement);
-        this.scene.background = new THREE.Color(0x66688d);
+        // this.scene.background = new THREE.Color(0x66688d);
 
         this.render();
 
         // Lights
-        const ambientLight = new THREE.AmbientLight(0xfdffe1, 0.4);
-
-        var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
-        hemiLight.position.set(0, 500, 0);
-
-        var dirLight = new THREE.DirectionalLight(0xffffff, 2);
-        dirLight.position.set(-2.3, 3, 3);
-
-        dirLight.position.multiplyScalar(50);
-        dirLight.name = "dirlight";
-
-        dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 1024 * 2;
-
-        var d = 350;
-
-        dirLight.shadow.camera.left = -d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = -d;
-
-        dirLight.shadow.camera.far = 3500;
-        dirLight.shadow.bias = -0.0001;
-        dirLight.shadow.mapSize.width = 512 * 4;
-        dirLight.shadow.mapSize.height = 512 * 4;
-
-        this.scene.add(dirLight);
-        this.scene.add(hemiLight);
-        this.scene.add(ambientLight)
+        // const ambientLight = new THREE.AmbientLight(0xfdffe1, 0.4);
+        //
+        // var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+        // hemiLight.position.set(0, 500, 0);
+        //
+        // var dirLight = new THREE.DirectionalLight(0xffffff, 2);
+        // dirLight.position.set(-2.3, 3, 3);
+        //
+        // dirLight.position.multiplyScalar(50);
+        // dirLight.name = "dirlight";
+        //
+        // dirLight.castShadow = true;
+        // dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 1024 * 2;
+        //
+        // var d = 350;
+        //
+        // dirLight.shadow.camera.left = -d;
+        // dirLight.shadow.camera.right = d;
+        // dirLight.shadow.camera.top = d;
+        // dirLight.shadow.camera.bottom = -d;
+        //
+        // dirLight.shadow.camera.far = 3500;
+        // dirLight.shadow.bias = -0.0001;
+        // dirLight.shadow.mapSize.width = 512 * 4;
+        // dirLight.shadow.mapSize.height = 512 * 4;
+        //
+        // this.scene.add(dirLight);
+        // this.scene.add(hemiLight);
+        // this.scene.add(ambientLight)
 
         this.world = new THREE.Group();
         this.world.name = "world";
