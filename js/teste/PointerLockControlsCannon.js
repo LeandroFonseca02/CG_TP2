@@ -3,7 +3,7 @@ import * as CANNON from './cannon-es.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
- * @author schteppe / https://github.com/schteppe
+ * @author schteppe /  https://github.com/schteppe
  */
 class PointerLockControlsCannon extends THREE.EventDispatcher {
   constructor(camera, cannonBody) {
