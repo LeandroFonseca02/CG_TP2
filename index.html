@@ -26,9 +26,36 @@
             color: white;
             font-size: 2rem;
         }
+        #instructions {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            text-align: center;
+
+            cursor: pointer;
+        }
+        #instructions span {
+            font-size: 40px;
+        }
     </style>
 </head>
 <body>
+<div id="instructions">
+    <span>Click to play</span>
+    <br />
+    (W,A,S,D = Move, SPACE = Jump, MOUSE = Look, CLICK = Shoot)
+</div>
 <!--<div class="progress-bar-container">-->
 <!--    <label for="progress-bar">Loading...</label>-->
 <!--    <progress id="progress-bar" value="0" max="100"></progress>-->
@@ -40,5 +67,5 @@
                     }
                 }
     </script>
-<script type="module" src="js/main.js"></script>
+<script type="module" src="js/teste.js"></script>
 </body>

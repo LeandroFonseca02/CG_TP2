@@ -9,7 +9,7 @@ class Obj {
 }
 
 // classe que permite a um objeto ter a geometria de um cubo
-class Cube extends Obj{
+export class Cube extends Obj{
     constructor(size) {
         super();
         this.geometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
@@ -67,7 +67,7 @@ export class Skybox extends Cube{
 }
 
 // classe que define o suporte de metal do nosso objeto hierárquico
-class Suporte extends Cube {
+export class Suporte extends Cube {
     constructor(size,position, rotateX, rotateZ, repA, repB, material) {
         super(size);
 

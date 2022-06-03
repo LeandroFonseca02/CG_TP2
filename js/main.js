@@ -1,9 +1,9 @@
 import * as THREE from './three/three.module.js';
 import {OrbitControls} from './three/OrbitControls.js';
-// import {PortalCreator, Skybox} from "./Objects.js";
-// import { Jardim, ModelAudio, Boneco, AnimatedModel} from "./Models.js";
-// import {FirstPersonControls} from "./three/FirstPersonControls.js";
-// import PortalManager from "./portal/PortalManager.js";
+import {PortalCreator, Skybox} from "./Objects.js";
+import { Jardim, ModelAudio, Boneco, AnimatedModel} from "./Models.js";
+import {FirstPersonControls} from "./three/FirstPersonControls.js";
+import PortalManager from "./portal/PortalManager.js";
 import Stats from "./three/stats.module.js";
 
 
@@ -35,6 +35,7 @@ class Application {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
+        this.renderer.shadowMap.autoUpdate = false;
         this.renderer.physicallyCorrectLights = true;
         this.renderer.setClearColor(0xcccccc);
         document.body.appendChild(this.renderer.domElement);
@@ -77,26 +78,26 @@ class Application {
         this.world.name = "world";
         this.scene.add(this.world)
 
-        // this.portalManager = new PortalManager(window,this.scene,this.renderer,this.camera);
+        this.portalManager = new PortalManager(window,this.scene,this.renderer,this.camera);
 
 
-        // // Loading Bar
-        // const progressBar = document.getElementById('progress-bar');
-        // loadingManager.onProgress = function (url, loaded, total) {
-        //     progressBar.value = (loaded / total) * 100;
-        // }
-        // const progressBarContainer = document.querySelector('.progress-bar-container');
-        // loadingManager.onLoad = function () {
-        //     progressBarContainer.style.display = 'none';
-        // }
+        // Loading Bar
+        const progressBar = document.getElementById('progress-bar');
+        loadingManager.onProgress = function (url, loaded, total) {
+            progressBar.value = (loaded / total) * 100;
+        }
+        const progressBarContainer = document.querySelector('.progress-bar-container');
+        loadingManager.onLoad = function () {
+            progressBarContainer.style.display = 'none';
+        }
 
         // Stats
         this.stats = Stats()
         document.body.appendChild(this.stats.dom)
 
         // Controls
-        // this.controls = new FirstPersonControls(this.camera, this.renderer.domElement);
-        // this.scene.add(this.controls.getObject());
+        this.controls = new FirstPersonControls(this.camera, this.renderer.domElement);
+        this.scene.add(this.controls.getObject());
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     }
 
@@ -116,15 +117,15 @@ class Application {
     update(timeElapsed){
         const delta = timeElapsed * 0.001;
         this.objects.forEach((object) => {
-            // if(object instanceof PortalCreator){
-            // }else if(object instanceof AnimatedModel){
-            //     object.update(delta);
-            // } else{
+            if(object instanceof PortalCreator){
+            }else if(object instanceof AnimatedModel){
+                object.update(delta);
+            } else{
                 object.update();
-            // }
+            }
         });
-        // this.portalManager.update();
-        // this.portalManager.render();
+        this.portalManager.update();
+        this.portalManager.render();
         this.controls.update();
         this.stats.update();
     }
@@ -133,14 +134,14 @@ class Application {
     add(mesh) {
         if (Array.isArray(mesh)){
             for(let index in mesh){
-                // if ( mesh[index] instanceof ModelAudio){
-                //     this.objects.push(mesh[index]);
-                //     this.scene.add( mesh[index].getMesh() );
-                //     mesh[index].addSound(this.camera);
-                // } else{
+                if ( mesh[index] instanceof ModelAudio){
+                    this.objects.push(mesh[index]);
+                    this.scene.add( mesh[index].getMesh() );
+                    mesh[index].addSound(this.camera);
+                } else{
                     this.objects.push(mesh[index]);
                     this.world.add( mesh[index].getMesh() );
-                // }
+                }
             }
 
         }
@@ -148,18 +149,18 @@ class Application {
             this.objects.push(mesh);
             this.scene.add(mesh.getMesh());
         }
-        // this.portalManager.extractPortalsFromObject(this.scene.getObjectByName("world"),this.scene,this.renderer)
+        this.portalManager.extractPortalsFromObject(this.scene.getObjectByName("world"),this.scene,this.renderer)
 
     }
 }
 
 let app = new Application();
 let objs = [
-    // new Skybox({width:2000, height:2000, depth:2000},{x:0, y:300, z:0}),
+    new Skybox({width:2000, height:2000, depth:2000},{x:0, y:300, z:0}),
     // new Jardim({x:0, y:0, z:0}),
-    // new PortalCreator({width:20,height:28},{x:-20,y:15,z:-150},0x5b723c, "p_1","p_2"),
-    // new PortalCreator({width:20,height:28},{x:-80,y:15,z:30},0xff0000, "p_2","p_1"),
-    // new Boneco({x:30, y:0, z:40}, {x:0, y:0, z:0})
+    new PortalCreator({width:20,height:28},{x:-20,y:15,z:-150},0x5b723c, "p_1","p_2"),
+    new PortalCreator({width:20,height:28},{x:-80,y:15,z:30},0xff0000, "p_2","p_1"),
+    new Boneco({x:30, y:0, z:40}, {x:0, y:0, z:0})
 
 ];
 
