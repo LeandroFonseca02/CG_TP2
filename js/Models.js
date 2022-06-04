@@ -14,6 +14,8 @@ export class AnimatedModel{
     constructor(){}
 }
 
+
+
 // classe que define os candeeiros do nosso cenário
 export class Lamp {
     constructor(position, rotation) {
