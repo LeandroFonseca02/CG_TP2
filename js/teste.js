@@ -3,10 +3,8 @@ import Stats from './three/stats.module.js';
 import {OrbitControls} from './three/OrbitControls.js';
 import * as CANNON from './teste/cannon-es.js';
 import CannonDebugger from './teste/cannon-es-debugger.js';
-import {GLTFLoader} from './three/GLTFLoader.js';
 import {PointerLockControlsCannon} from './teste/PointerLockControlsCannon.js';
-import PortalManager from './portal/PortalManager.js';
-import {PortalCreator} from './Objects.js';
+import {Enemy} from "./Enemy.js";
 
 
 
@@ -38,7 +36,7 @@ class Application {
         document.body.appendChild(this.renderer.domElement);
         this.stats = Stats()
         document.body.appendChild(this.stats.dom)
-        this.portalManager = new PortalManager(window,this.scene,this.renderer,this.camera);
+        // this.portalManager = new PortalManager(window,this.scene,this.renderer,this.camera);
         this.world = new CANNON.World();
         this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
         this.world.defaultContactMaterial.contactEquationRelaxation = 4
@@ -125,9 +123,6 @@ class Application {
         this.icosahedronBody.position.z = this.icosahedronMesh.position.z
         this.world.addBody(this.icosahedronBody)
 
-        this.mundo = new THREE.Group();
-        this.mundo.name = "world";
-        this.scene.add(this.mundo)
 
 
         this.balls = []
@@ -328,17 +323,19 @@ class Application {
 
     update(timeElapsed){
         const delta = timeElapsed * 0.001;
+        const time = performance.now() / 1000
+        const dt = time - lastCallTime
+        lastCallTime = time
         this.objects.forEach((object) => {
-            if(object instanceof PortalCreator){
+            if(object instanceof Enemy){
+                object.update(dt,this.controls.yawObject);
             // }else if(object instanceof AnimatedModel){
             //     object.update(delta);
             } else{
             object.update();
             }
         });
-        const time = performance.now() / 1000
-        const dt = time - lastCallTime
-        lastCallTime = time
+
 
         // this.portalManager.update();
         // this.portalManager.render();
@@ -369,23 +366,24 @@ class Application {
     add(mesh) {
         if (Array.isArray(mesh)){
             for(var index in mesh){
-                // if(mesh[index] instanceof enemy){
-                //     this.world.addBody(mesh[index].getBody())
-                // }
+                if(mesh[index] instanceof Enemy){
+                    this.world.addBody(mesh[index].getBody())
+                }
                 this.objects.push(mesh[index]);
-                this.mundo.add( mesh[index].getMesh() );
+                this.scene.add( mesh[index].getMesh() );
             }
         }
         else{
             this.objects.push(mesh);
-            this.mundo.add(mesh.getMesh());
+            this.scene.add(mesh.getMesh());
         }
-        this.portalManager.extractPortalsFromObject(this.scene.getObjectByName("world"),this.scene,this.renderer)
+        // this.portalManager.extractPortalsFromObject(this.scene.getObjectByName("world"),this.scene,this.renderer)
     }
 }
 
 let app = new Application();
 let objs = [
+    new Enemy({x:20,y:0,z:20})
     // new PortalCreator({width:20,height:28},{x:-20,y:17,z:-50},0x5b723c, "p_1","p_2"),
     // new PortalCreator({width:20,height:28},{x:-80,y:17,z:30},0xff0000, "p_2","p_1"),
 ];
