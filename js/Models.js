@@ -1,7 +1,7 @@
-import {GLTFLoader} from "./three/GLTFLoader.js";
-import * as THREE from "./three/three.module.js";
-import {Water} from "./three/Water2.js";
-import {Vector2} from "./three/three.module.js";
+import {GLTFLoader} from './three/GLTFLoader.js';
+import * as THREE from './three/three.module.js';
+import {Water} from './three/Water2.js';
+import {Vector2} from './three/three.module.js';
 import {loadingManager} from './main.js';
 
 

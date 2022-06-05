@@ -3,10 +3,11 @@ import * as THREE from "./three/three.module.js";
 import * as CANNON from "./teste/cannon-es.js";
 
 export class Enemy{
-    constructor(position) {
+    constructor(position, speed) {
         this.mesh = this.load();
         this.mesh.position.set(position.x,position.y,position.z);
         this.mesh.scale.set(0.5,0.5,0.5);
+        this.speed = speed;
         this.body = this.createBody();
     }
 
@@ -48,10 +49,6 @@ export class Enemy{
     }
 
     calculate(controlsObject){
-        this.array = [this.mesh.position, controlsObject.position]
-        this.spline = new THREE.CatmullRomCurve3( this.array );
-        this.lineSegments = 21;
-        this.points = this.spline.getPoints( this.lineSegments);
         this.dx = controlsObject.position.x-this.mesh.position.x
 
         this.dz = controlsObject.position.z-this.mesh.position.z
@@ -70,7 +67,6 @@ export class Enemy{
         this.rotationMatrix.lookAt(controlsObject.position, this.mesh.position, this.mesh.up);
         this.targetQuaternion.setFromRotationMatrix(this.rotationMatrix);
         this.mesh.quaternion.rotateTowards(this.targetQuaternion, delta*2);
-        this.speed = 0.05
         this.mesh.position.x += this.dx*this.speed
         this.mesh.position.z += this.dz*this.speed
     }

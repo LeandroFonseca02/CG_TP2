@@ -7,7 +7,6 @@ import {PointerLockControlsCannon} from './teste/PointerLockControlsCannon.js';
 import {Enemy} from "./Enemy.js";
 
 
-
 let lastCallTime = performance.now();
 
 class Application {
@@ -84,8 +83,6 @@ class Application {
 
 
 
-
-
         const radius = 0.3
         this.sphereShape = new CANNON.Sphere(radius)
         this.sphereBody = new CANNON.Body({ mass: 5, material: physicsMaterial })
@@ -93,36 +90,6 @@ class Application {
         this.sphereBody.position.set(0, 5, 0)
         this.sphereBody.linearDamping = 0.9
         this.world.addBody(this.sphereBody)
-
-
-
-
-        const icosahedronGeometry = new THREE.IcosahedronGeometry(1, 0)
-        this.icosahedronMesh = new THREE.Mesh(icosahedronGeometry, normalMaterial)
-        this.icosahedronMesh.position.x = 1
-        this.icosahedronMesh.position.y = 3
-        this.icosahedronMesh.castShadow = true
-        this.scene.add(this.icosahedronMesh)
-        let position = this.icosahedronMesh.geometry.attributes.position.array
-        const icosahedronPoints = []
-        for (let i = 0; i < position.length; i += 3) {
-            icosahedronPoints.push(new CANNON.Vec3(position[i], position[i + 1], position[i + 2]))
-        }
-        const icosahedronFaces = []
-        for (let i = 0; i < position.length / 3; i += 3) {
-            icosahedronFaces.push([i, i + 1, i + 2])
-        }
-        const icosahedronShape = new CANNON.ConvexPolyhedron({
-            vertices: icosahedronPoints,
-            faces: icosahedronFaces,
-        })
-        this.icosahedronBody = new CANNON.Body({ mass: 1 })
-        this.icosahedronBody.addShape(icosahedronShape)
-        this.icosahedronBody.position.x = this.icosahedronMesh.position.x
-        this.icosahedronBody.position.y = this.icosahedronMesh.position.y
-        this.icosahedronBody.position.z = this.icosahedronMesh.position.z
-        this.world.addBody(this.icosahedronBody)
-
 
 
         this.balls = []
@@ -172,22 +139,6 @@ class Application {
             this.ballBody.position.set(x, y, z)
             ballMesh.position.copy(this.ballBody.position)
         })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -241,73 +192,6 @@ class Application {
         })
     }
 
-    calculate(){
-
-        this.array = [this.mesh.position, this.controls.yawObject.position]
-        this.spline = new THREE.CatmullRomCurve3( this.array );
-        this.lineSegments = 21;
-        this.points = this.spline.getPoints( this.lineSegments);
-        this.dx = this.controls.yawObject.position.x-this.mesh.position.x
-
-        this.dz = this.controls.yawObject.position.z-this.mesh.position.z
-        this.lenght = Math.sqrt(this.dx*this.dx+this.dz*this.dz)
-
-        if(this.lenght){
-            this.dx /= this.lenght
-            this.dz /= this.lenght
-        }
-
-        // this.tangent = 0;
-        // this.normal = new THREE.Vector3( );
-        // this.binormal = new THREE.Vector3( 0, 1, 0 );
-        //
-        // this.tangents = [];
-        // this.normals = [];
-        // this.binormals = [];
-        //
-        // for (let j = 0; j < this.lineSegments+1; j ++ ) {
-        //     this.tangent = this.spline.getTangent(  j / this.lineSegments );
-        //     this.tangents.push( this.tangent.clone( ) );
-        //
-        //     this.normal.crossVectors( this.tangent, this.binormal );
-        //
-        //     this.normal.y = 0; // to prevent lateral slope of the road
-        //
-        //     this.normal.normalize( );
-        //     this.normals.push( this.normal.clone( ) );
-        //
-        //     this.binormal.crossVectors( this.normal, this.tangent ); // new binormal
-        //     this.binormals.push( this.binormal.clone( ) );
-        // }
-        //
-        // this.M3 = new THREE.Matrix3( );
-        // this.M4 = new THREE.Matrix4( );
-        // this.lineSegmentCounter = 0;
-    }
-
-    movement(delta){
-
-        this.rotationMatrix = new THREE.Matrix4();
-        this.targetQuaternion = new THREE.Quaternion();
-        this.rotationMatrix.lookAt(this.controls.yawObject.position, this.mesh.position, this.mesh.up);
-        this.targetQuaternion.setFromRotationMatrix(this.rotationMatrix);
-        this.mesh.quaternion.rotateTowards(this.targetQuaternion, delta*2);
-        this.speed = 0.05
-        this.mesh.position.x += this.dx*this.speed
-
-        this.mesh.position.z += this.dz*this.speed
-        // if ( this.lineSegmentCounter >= this.lineSegments+1 ) {
-        //     this.lineSegmentCounter = 0;
-        // }
-        //
-        // this.M3.set( this.tangents[ this.lineSegmentCounter ].x, this.binormals[ this.lineSegmentCounter ].x, this.normals[ this.lineSegmentCounter ].x, this.tangents[ this.lineSegmentCounter ].y, this.binormals[ this.lineSegmentCounter ].y, this.normals[ this.lineSegmentCounter ].y, this.tangents[ this.lineSegmentCounter ].z, this.binormals[ this.lineSegmentCounter ].z, this.normals[ this.lineSegmentCounter ].z );
-        // this.M4.setFromMatrix3( this.M3 );
-        //
-        // this.mesh.setRotationFromMatrix( this.M4 );
-        // this.mesh.position.set( this.points[ this.lineSegmentCounter ].x + 0.18 * this.normals[ this.lineSegmentCounter ].x, this.points[ this.lineSegmentCounter ].y, this.points[ this.lineSegmentCounter ].z + 0.18 * this.normals[ this.lineSegmentCounter ].z );
-        // this.lineSegmentCounter += 80;
-    }
-
     render() {
         requestAnimationFrame((t) => {
             if (this.time === null) {
@@ -336,16 +220,9 @@ class Application {
             }
         });
 
-
-        // this.portalManager.update();
-        // this.portalManager.render();
-
         this.boxMesh.position.copy(this.boxBody.position);
         this.boxMesh.quaternion.copy(this.boxBody.quaternion);
-        // this.boxMesh2.position.copy(this.boxBody2.position);
-        // this.boxMesh2.quaternion.copy(this.boxBody2.quaternion);
-        this.icosahedronMesh.position.copy(this.icosahedronBody.position);
-        this.icosahedronMesh.quaternion.copy(this.icosahedronBody.quaternion);
+
         // Update ball positions
         for (let i = 0; i < this.balls.length; i++) {
             this.ballMeshes[i].position.copy(this.balls[i].position)
@@ -356,10 +233,6 @@ class Application {
         this.cannonDebugger.update();
         this.controls.update(dt);
         this.stats.update();
-        // this.calculate()
-        // this.movement(dt)
-        // this.boxBody2.position.set(this.mesh.position.x, this.mesh.position.y+2, this.mesh.position.z);
-        // this.boxBody2.quaternion.copy(this.mesh.quaternion);
         this.world.fixedStep(1/60);
     }
 
@@ -377,14 +250,15 @@ class Application {
             this.objects.push(mesh);
             this.scene.add(mesh.getMesh());
         }
-        // this.portalManager.extractPortalsFromObject(this.scene.getObjectByName("world"),this.scene,this.renderer)
+
     }
 }
 
 let app = new Application();
 let objs = [
-    new Enemy({x:20,y:0,z:20})
-    // new PortalCreator({width:20,height:28},{x:-20,y:17,z:-50},0x5b723c, "p_1","p_2"),
-    // new PortalCreator({width:20,height:28},{x:-80,y:17,z:30},0xff0000, "p_2","p_1"),
+    new Enemy({x:20,y:0,z:20}, 0.08),
+    new Enemy({x:-30,y:0,z:30}, 0.05),
+    new Enemy({x:40,y:0,z:-40},0.2),
+    new Enemy({x:50,y:0,z:-50},0.1)
 ];
 app.add(objs);
