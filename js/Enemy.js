@@ -3,12 +3,30 @@ import * as THREE from "./three/three.module.js";
 import * as CANNON from "./teste/cannon-es.js";
 
 export class Enemy{
-    constructor(position, speed) {
+    constructor(position, speed, scene, world, player) {
         this.mesh = this.load();
         this.mesh.position.set(position.x,position.y,position.z);
         this.mesh.scale.set(0.5,0.5,0.5);
         this.speed = speed;
         this.body = this.createBody();
+        this.player = player;
+        this.scene = scene
+        this.world = world
+        this.scene.add(this.mesh)
+        this.world.addBody(this.body)
+        this.body.addEventListener('collide', (event)=>{
+            if(event.body===this.player.getBody()){
+                this.scene.remove(this.mesh)
+                this.world.removeBody(this.body)
+            }else{
+                for (let i = 0; i < this.player.getBalls().length ; i++) {
+                    if(event.body===this.player.getBalls()[i]){
+                        this.scene.remove(this.mesh)
+                        this.world.removeBody(this.body)
+                    }
+                }
+            }
+        })
     }
 
     load() {
@@ -48,10 +66,10 @@ export class Enemy{
         return this.body;
     }
 
-    calculate(controlsObject){
-        this.dx = controlsObject.position.x-this.mesh.position.x
+    calculate(){
+        this.dx = this.player.controls.yawObject.position.x-this.mesh.position.x
 
-        this.dz = controlsObject.position.z-this.mesh.position.z
+        this.dz = this.player.controls.yawObject.position.z-this.mesh.position.z
         this.lenght = Math.sqrt(this.dx*this.dx+this.dz*this.dz)
 
         if(this.lenght){
@@ -61,33 +79,20 @@ export class Enemy{
 
     }
 
-    movement(controlsObject, delta){
+    movement(delta){
         this.rotationMatrix = new THREE.Matrix4();
         this.targetQuaternion = new THREE.Quaternion();
-        this.rotationMatrix.lookAt(controlsObject.position, this.mesh.position, this.mesh.up);
+        this.rotationMatrix.lookAt(this.player.controls.yawObject.position, this.mesh.position, this.mesh.up);
         this.targetQuaternion.setFromRotationMatrix(this.rotationMatrix);
         this.mesh.quaternion.rotateTowards(this.targetQuaternion, delta*2);
         this.mesh.position.x += this.dx*this.speed
         this.mesh.position.z += this.dz*this.speed
     }
-    update(delta, controlsObject){
-        this.calculate(controlsObject);
-        this.movement(controlsObject, delta);
+    update(delta){
+        this.calculate();
+        this.movement(delta);
         this.body.position.set(this.mesh.position.x, this.mesh.position.y+2, this.mesh.position.z);
         this.body.quaternion.copy(this.mesh.quaternion);
-        // this.body.addEventListener('collide', (event)=>{
-        //     if(event.body===this.sphereBody){
-        //         this.scene.remove(this.mesh)
-        //         this.world.removeBody(this.boxBody2)
-        //     }else{
-        //         for (let i = 0; i < this.balls.length ; i++) {
-        //             if(event.body===this.balls[i]){
-        //                 this.scene.remove(this.mesh)
-        //                 this.world.removeBody(this.boxBody2)
-        //             }
-        //         }
-        //     }
-        // })
     }
     getMesh(){return this.mesh;}
 }

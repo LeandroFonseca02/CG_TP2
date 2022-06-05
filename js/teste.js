@@ -5,6 +5,7 @@ import * as CANNON from './teste/cannon-es.js';
 import CannonDebugger from './teste/cannon-es-debugger.js';
 import {PointerLockControlsCannon} from './teste/PointerLockControlsCannon.js';
 import {Enemy} from "./Enemy.js";
+import {Player} from "./Player.js";
 
 
 let lastCallTime = performance.now();
@@ -61,9 +62,13 @@ class Application {
         // We must add the contact materials to the world
         this.world.addContactMaterial(physics_physics);
 
+
+        this.player = new Player(this.camera);
+        this.scene.add(this.player.getMesh())
+        this.world.addBody(this.player.getBody())
+
+
         const material = new THREE.MeshStandardMaterial( {color: 0x434c5e, side: THREE.DoubleSide} );
-
-
 
         const halfExtents = new CANNON.Vec3(100, 1, 100);
         const boxShape = new CANNON.Box(halfExtents);
@@ -78,68 +83,6 @@ class Application {
         this.boxMesh.position.copy(this.boxBody.position)
         this.world.addBody(this.boxBody)
         this.scene.add(this.boxMesh)
-
-        const normalMaterial = new THREE.MeshNormalMaterial()
-
-
-
-        const radius = 0.3
-        this.sphereShape = new CANNON.Sphere(radius)
-        this.sphereBody = new CANNON.Body({ mass: 5, material: physicsMaterial })
-        this.sphereBody.addShape(this.sphereShape)
-        this.sphereBody.position.set(0, 5, 0)
-        this.sphereBody.linearDamping = 0.9
-        this.world.addBody(this.sphereBody)
-
-
-        this.balls = []
-        this.ballMeshes = []
-
-
-        const shootVelocity = 90
-        const ballShape = new CANNON.Sphere(0.1)
-        const ballGeometry = new THREE.SphereBufferGeometry(ballShape.radius, 32, 32)
-
-
-        function getShootDirection(camera, sphereBody) {
-            const vector = new THREE.Vector3(0, 0, 1)
-            vector.unproject(camera)
-            const ray = new THREE.Ray(sphereBody.position, vector.sub(sphereBody.position).normalize())
-            return ray.direction
-        }
-
-        window.addEventListener('click', (event) => {
-            if (!this.controls.enabled) {
-                return
-            }
-
-            this.ballBody = new CANNON.Body({ mass: 0.1})
-            this.ballBody.addShape(ballShape)
-            const ballMesh = new THREE.Mesh(ballGeometry, material)
-
-            ballMesh.castShadow = true
-            ballMesh.receiveShadow = true
-
-            this.world.addBody(this.ballBody)
-            this.scene.add(ballMesh)
-            this.balls.push(this.ballBody)
-            this.ballMeshes.push(ballMesh)
-
-            const shootDirection = getShootDirection(this.camera, this.sphereBody)
-            this.ballBody.velocity.set(
-                shootDirection.x * shootVelocity,
-                shootDirection.y * shootVelocity,
-                shootDirection.z * shootVelocity
-            )
-
-            // Move the ball outside the player sphere
-            const x = this.sphereBody.position.x + shootDirection.x * (this.sphereShape.radius * 1.02 + ballShape.radius)
-            const y = this.sphereBody.position.y + shootDirection.y * (this.sphereShape.radius * 1.02 + ballShape.radius)
-            const z = this.sphereBody.position.z + shootDirection.z * (this.sphereShape.radius * 1.02 + ballShape.radius)
-            this.ballBody.position.set(x, y, z)
-            ballMesh.position.copy(this.ballBody.position)
-        })
-
 
 
         const ambientLight = new THREE.AmbientLight(0xfdffe1, 0.4);
@@ -173,21 +116,33 @@ class Application {
         this.scene.add(ambientLight)
 
         this.render();
-        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls = new PointerLockControlsCannon(this.camera, this.sphereBody);
-        this.scene.add(this.controls.getObject())
-        const instructions = document.getElementById('instructions')
-        instructions.addEventListener('click', () => {
-           this.controls.lock()
+        this.enemies = [
+            new Enemy({x:20,y:0,z:20}, 0.08,this.scene, this.world, this.player),
+            new Enemy({x:-30,y:0,z:30}, 0.05,this.scene, this.world, this.player),
+            new Enemy({x:40,y:0,z:-40},0.2,this.scene, this.world, this.player),
+            new Enemy({x:50,y:0,z:-50},0.1,this.scene, this.world, this.player)
+        ]
+
+        window.addEventListener('click', (event) => {
+            this.player.shoot()
+            const playerBalls = this.player.getBalls()
+            const playerBallMeshes = this.player.getBallMeshes()
+            this.scene.add(playerBallMeshes[playerBallMeshes.length-1])
+            this.world.addBody(playerBalls[playerBalls.length-1])
         })
 
-        this.controls.addEventListener('lock', () => {
-            this.controls.enabled = true
+        const instructions = document.getElementById('instructions')
+        instructions.addEventListener('click', () => {
+           this.player.controls.lock()
+        })
+
+        this.player.controls.addEventListener('lock', () => {
+            this.player.controls.enabled = true
             instructions.style.display = 'none'
         })
 
-        this.controls.addEventListener('unlock', () => {
-            this.controls.enabled = false
+        this.player.controls.addEventListener('unlock', () => {
+            this.player.controls.enabled = false
             instructions.style.display = null
         })
     }
@@ -211,37 +166,40 @@ class Application {
         const dt = time - lastCallTime
         lastCallTime = time
         this.objects.forEach((object) => {
-            if(object instanceof Enemy){
-                object.update(dt,this.controls.yawObject);
+            // if(object instanceof Enemy){
+            //     object.update(dt,this.player.controls.yawObject);
             // }else if(object instanceof AnimatedModel){
             //     object.update(delta);
-            } else{
+            // } else{
             object.update();
-            }
+            // }
         });
 
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].update(dt)
+        }
         this.boxMesh.position.copy(this.boxBody.position);
         this.boxMesh.quaternion.copy(this.boxBody.quaternion);
 
         // Update ball positions
-        for (let i = 0; i < this.balls.length; i++) {
-            this.ballMeshes[i].position.copy(this.balls[i].position)
-            this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
-
-        }
+        // for (let i = 0; i < this.balls.length; i++) {
+        //     this.ballMeshes[i].position.copy(this.balls[i].position)
+        //     this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
+        //
+        // }
 
         this.cannonDebugger.update();
-        this.controls.update(dt);
-        this.stats.update();
+        this.player.update(dt);
+        this.stats.update()
         this.world.fixedStep(1/60);
     }
 
     add(mesh) {
         if (Array.isArray(mesh)){
             for(var index in mesh){
-                if(mesh[index] instanceof Enemy){
-                    this.world.addBody(mesh[index].getBody())
-                }
+                // if(mesh[index] instanceof Enemy){
+                //     this.world.addBody(mesh[index].getBody())
+                // }
                 this.objects.push(mesh[index]);
                 this.scene.add( mesh[index].getMesh() );
             }
@@ -250,15 +208,14 @@ class Application {
             this.objects.push(mesh);
             this.scene.add(mesh.getMesh());
         }
-
     }
 }
 
 let app = new Application();
 let objs = [
-    new Enemy({x:20,y:0,z:20}, 0.08),
-    new Enemy({x:-30,y:0,z:30}, 0.05),
-    new Enemy({x:40,y:0,z:-40},0.2),
-    new Enemy({x:50,y:0,z:-50},0.1)
+    // new Enemy({x:20,y:0,z:20}, 0.08),
+    // new Enemy({x:-30,y:0,z:30}, 0.05),
+    // new Enemy({x:40,y:0,z:-40},0.2),
+    // new Enemy({x:50,y:0,z:-50},0.1)
 ];
 app.add(objs);
