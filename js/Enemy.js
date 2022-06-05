@@ -23,6 +23,11 @@ export class Enemy{
                     if(event.body===this.player.getBalls()[i]){
                         this.scene.remove(this.mesh)
                         this.world.removeBody(this.body)
+                        this.scene.remove(this.player.getBallMeshes()[i])
+                        this.world.removeBody(this.player.getBalls()[i])
+
+                        this.player.getBallMeshes().splice(i,1)
+                        this.player.getBalls().splice(i,1)
                     }
                 }
             }

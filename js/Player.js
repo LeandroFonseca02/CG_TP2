@@ -10,6 +10,7 @@ export class Player{
         this.camera = camera
         this.balls = []
         this.ballMeshes = []
+        this.lastShot = 0
     }
 
     createBody(){
@@ -50,32 +51,36 @@ export class Player{
     }
 
     shoot(){
-        const shootVelocity = 90
-        const ballShape = new CANNON.Sphere(0.1)
-        const ballGeometry = new THREE.SphereBufferGeometry(ballShape.radius, 32, 32)
-        const material = new THREE.MeshNormalMaterial();
-        const ballBody = new CANNON.Body({ mass: 0.1})
-        ballBody.addShape(ballShape)
-        const ballMesh = new THREE.Mesh(ballGeometry, material)
-        ballMesh.castShadow = true
-        ballMesh.receiveShadow = true
+        const shot = new Date().valueOf();
+        if(this.lastShot===0 || shot-this.lastShot>600){
+            const shootVelocity = 90
+            const ballShape = new CANNON.Sphere(0.1)
+            const ballGeometry = new THREE.SphereBufferGeometry(ballShape.radius, 32, 32)
+            const material = new THREE.MeshNormalMaterial();
+            const ballBody = new CANNON.Body({ mass: 0.1})
+            ballBody.addShape(ballShape)
+            const ballMesh = new THREE.Mesh(ballGeometry, material)
+            ballMesh.castShadow = true
+            ballMesh.receiveShadow = true
 
-        this.balls.push(ballBody)
-        this.ballMeshes.push(ballMesh)
+            this.balls.push(ballBody)
+            this.ballMeshes.push(ballMesh)
 
-        const shootDirection = this.getShootDirection()
-        ballBody.velocity.set(
-            shootDirection.x * shootVelocity,
-            shootDirection.y * shootVelocity,
-            shootDirection.z * shootVelocity
-        )
+            const shootDirection = this.getShootDirection()
+            ballBody.velocity.set(
+                shootDirection.x * shootVelocity,
+                shootDirection.y * shootVelocity,
+                shootDirection.z * shootVelocity
+            )
 
-        // Move the ball outside the player sphere
-        const x = this.body.position.x + shootDirection.x * (this.radius * 1.02 + ballShape.radius)
-        const y = this.body.position.y + shootDirection.y * (this.radius * 1.02 + ballShape.radius)
-        const z = this.body.position.z + shootDirection.z * (this.radius * 1.02 + ballShape.radius)
-        ballBody.position.set(x, y, z)
-        ballMesh.position.copy(ballBody.position)
+            // Move the ball outside the player sphere
+            const x = this.body.position.x + shootDirection.x * (this.radius * 1.02 + ballShape.radius)
+            const y = this.body.position.y + shootDirection.y * (this.radius * 1.02 + ballShape.radius)
+            const z = this.body.position.z + shootDirection.z * (this.radius * 1.02 + ballShape.radius)
+            ballBody.position.set(x, y, z)
+            ballMesh.position.copy(ballBody.position)
+            this.lastShot=shot;
+        }
     }
 
     getBalls(){
