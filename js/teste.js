@@ -9,6 +9,7 @@ import PortalManager from './portal/PortalManager.js';
 import {PortalCreator} from './Objects.js';
 
 
+
 let lastCallTime = performance.now();
 
 class Application {
@@ -64,41 +65,7 @@ class Application {
         this.world.addContactMaterial(physics_physics);
 
         const material = new THREE.MeshStandardMaterial( {color: 0x434c5e, side: THREE.DoubleSide} );
-        // const groundShape = new CANNON.Plane();
-        // const groundBody = new CANNON.Body({ mass: 0, material: physicsMaterial });
-        // groundBody.addShape(groundShape);
-        // groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
-        // this.world.addBody(groundBody);
-        //
-        // const geometry = new THREE.PlaneBufferGeometry( 100, 100 ,100,100);
-        // const plane = new THREE.Mesh( geometry, material );
-        // plane.rotateX(-Math.PI / 2);
-        // this.scene.add( plane );
 
-        let loader = new GLTFLoader();
-        this.mesh = new THREE.Mesh();
-
-        loader.load('./models/boneco/ghost.glb',  (gltf) => {
-            gltf.scene.traverse(function(child) {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            })
-            let model = gltf.scene.children[0];
-            model.name = "trash";
-
-            // model.position.set(0,0,0);
-            // model.rotation.set(0,0,0);
-            model.scale.set(0.5,0.5,0.5);
-            model.material.metalness=0;
-            this.mesh.add(model);
-            console.log(gltf)
-        }, undefined, function (error) {
-            console.error(error);
-        });
-
-        // this.scene.add(this.mesh);
 
 
         const halfExtents = new CANNON.Vec3(100, 1, 100);
@@ -117,22 +84,7 @@ class Application {
 
         const normalMaterial = new THREE.MeshNormalMaterial()
 
-        const halfExtents2 = new CANNON.Vec3(0.5, 0.5, 0.5);
-        this.boxShape2 = new CANNON.Box(halfExtents2);
-        const boxGeometry2 = new THREE.BoxBufferGeometry(halfExtents2.x * 2, halfExtents2.y * 2, halfExtents2.z * 2);
-        this.boxBody2 = new CANNON.Body({ isTrigger: true})
-        this.boxBody2.addEventListener('collide', (event)=>{
-                if(event.body===this.ballBody){
-                    this.scene.remove(this.boxMesh2)
-                    this.world.removeBody(this.boxBody2)
-                }
-        })
-        this.boxBody2.addShape(this.boxShape2)
-        this.boxMesh2 = new THREE.Mesh(boxGeometry2, normalMaterial)
-        this.boxBody2.position.set(0, 2, 20)
-        this.boxMesh2.position.copy(this.boxBody2.position)
-        this.world.addBody(this.boxBody2)
-        this.scene.add(this.boxMesh2)
+
 
 
 
@@ -182,7 +134,7 @@ class Application {
         this.ballMeshes = []
 
 
-        const shootVelocity = 15
+        const shootVelocity = 90
         const ballShape = new CANNON.Sphere(0.1)
         const ballGeometry = new THREE.SphereBufferGeometry(ballShape.radius, 32, 32)
 
@@ -213,9 +165,9 @@ class Application {
 
             const shootDirection = getShootDirection(this.camera, this.sphereBody)
             this.ballBody.velocity.set(
-                shootDirection.x * shootVelocity*10,
-                shootDirection.y * shootVelocity*10,
-                shootDirection.z * shootVelocity*10
+                shootDirection.x * shootVelocity,
+                shootDirection.y * shootVelocity,
+                shootDirection.z * shootVelocity
             )
 
             // Move the ball outside the player sphere
@@ -227,9 +179,7 @@ class Application {
         })
 
 
-        this.geometry = new THREE.BoxGeometry(1,1,1)
-        this.mesh.position.set(20,1,20)
-        this.scene.add(this.mesh)
+
 
 
 
@@ -403,20 +353,25 @@ class Application {
         for (let i = 0; i < this.balls.length; i++) {
             this.ballMeshes[i].position.copy(this.balls[i].position)
             this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
-        }
 
+        }
 
         this.cannonDebugger.update();
         this.controls.update(dt);
         this.stats.update();
-        this.calculate()
-        this.movement(dt)
+        // this.calculate()
+        // this.movement(dt)
+        // this.boxBody2.position.set(this.mesh.position.x, this.mesh.position.y+2, this.mesh.position.z);
+        // this.boxBody2.quaternion.copy(this.mesh.quaternion);
         this.world.fixedStep(1/60);
     }
 
     add(mesh) {
         if (Array.isArray(mesh)){
             for(var index in mesh){
+                // if(mesh[index] instanceof enemy){
+                //     this.world.addBody(mesh[index].getBody())
+                // }
                 this.objects.push(mesh[index]);
                 this.mundo.add( mesh[index].getMesh() );
             }

@@ -324,20 +324,21 @@ class Application {
         for (let i = 0; i < this.bulletBodys.length; i++) {
             this.bulletBodys[i].position.copy(this.bullets[i].position)
             this.bulletBodys[i].quaternion.copy(this.bullets[i].quaternion)
-            this.bulletBodys[i].addEventListener('collide', (event)=>{
-                    if(event.body===this.boxBody){
-                        console.log("this balls")
-                    }
-            })
+            // this.bulletBodys[i].addEventListener('collide', (event)=>{
+            //         if(event.body===this.boxBody){
+            //             console.log("this balls")
+            //         }
+            // })
         }
 
         for(var index=0; index<this.bullets.length; index+=1){
-            if( this.bullets[index] === undefined ) continue;
-            if( this.bullets[index].alive == false ){
-                this.bullets.splice(index,1);
-                continue;
-            }
-
+            // if( this.bullets[index] === undefined ) continue;
+            // if( this.bullets[index].alive == false ){
+            //     this.bullets.splice(index,1);
+            //     continue;
+            // }
+            console.log(this.bullets[index].position)
+            console.log(this.bulletBodys[index].position)
             this.bullets[index].position.add(this.bullets[index].velocity);
         }
 
