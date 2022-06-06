@@ -1,6 +1,7 @@
 import * as THREE from "./three/three.module.js";
 import * as CANNON from "./teste/cannon-es.js";
 import {PointerLockControlsCannon} from "./teste/PointerLockControlsCannon.js";
+import {GLTFLoader} from "./three/GLTFLoader.js";
 
 export class Player{
     constructor(camera) {
@@ -11,6 +12,9 @@ export class Player{
         this.balls = []
         this.ballMeshes = []
         this.lastShot = 0
+        this.animationMixer = null;
+        this.animation = null;
+        this.ballMesh = this.loadBulletMesh();
     }
 
     createBody(){
@@ -20,6 +24,29 @@ export class Player{
         sphereBody.position.set(0, 5, 0)
         sphereBody.linearDamping = 0.9
         return  sphereBody;
+    }
+
+    loadBulletMesh(){
+        let loader = new GLTFLoader();
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/bullet/energy.glb', (gltf) => {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = false;
+                    child.receiveShadow = false;
+                }
+            })
+            let model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(0.1,0.1,0.1);
+            mesh.add(model);
+
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
     }
 
     update(dt){
@@ -59,7 +86,7 @@ export class Player{
             const material = new THREE.MeshNormalMaterial();
             const ballBody = new CANNON.Body({ mass: 0.1})
             ballBody.addShape(ballShape)
-            const ballMesh = new THREE.Mesh(ballGeometry, material)
+            const ballMesh = this.ballMesh.clone();
             ballMesh.castShadow = true
             ballMesh.receiveShadow = true
 

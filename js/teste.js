@@ -176,7 +176,7 @@ class Application {
         });
 
         for (let i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].update(dt)
+            this.enemies[i].update(dt,delta)
         }
         this.boxMesh.position.copy(this.boxBody.position);
         this.boxMesh.quaternion.copy(this.boxBody.quaternion);
@@ -188,7 +188,7 @@ class Application {
         //
         // }
 
-        this.cannonDebugger.update();
+        // this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);

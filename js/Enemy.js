@@ -6,10 +6,12 @@ export class Enemy{
     constructor(position, speed, scene, world, player) {
         this.mesh = this.load();
         this.mesh.position.set(position.x,position.y,position.z);
-        this.mesh.scale.set(0.5,0.5,0.5);
+        this.mesh.scale.set(2,2,2);
         this.speed = speed;
         this.body = this.createBody();
         this.player = player;
+        this.animationMixer = null;
+        this.animation = null;
         this.scene = scene
         this.world = world
         this.scene.add(this.mesh)
@@ -45,12 +47,25 @@ export class Enemy{
                     child.receiveShadow = true;
                 }
             })
-            let model = gltf.scene.children[0];
-            model.position.set(0,0,0);
-            model.rotation.set(0,0,0);
+            let model = gltf.scene;
+            model.position.set(0,0.6,0);
+            model.rotation.set(0,Math.PI,0);
             model.scale.set(1,1,1);
-            model.material.metalness=0;
             mesh.add(model);
+
+
+            const clips = [];
+            this.animationMixer = new THREE.AnimationMixer(model);
+            const animations = gltf.animations;
+
+            animations.map((v,i) => {
+                clips[i] = this.animationMixer.clipAction(v)
+            })
+
+            clips[0].play();
+
+
+
         }, undefined, function (error) {
             console.error(error);
         });
@@ -58,12 +73,12 @@ export class Enemy{
     }
 
     createBody(){
-        const halfExtents = new CANNON.Vec3(0.5, 0.5, 0.5);
+        const halfExtents = new CANNON.Vec3(0.5, 0.6, 0.5);
         const boxShape = new CANNON.Box(halfExtents);
         const boxGeometry = new THREE.BoxBufferGeometry(halfExtents.x * 2, halfExtents.y * 2, halfExtents.z * 2);
         const boxBody = new CANNON.Body({ isTrigger: true})
         boxBody.addShape(boxShape)
-        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+2, this.mesh.position.z)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+1.7, this.mesh.position.z)
         return boxBody;
     }
 
@@ -73,7 +88,6 @@ export class Enemy{
 
     calculate(){
         this.dx = this.player.controls.yawObject.position.x-this.mesh.position.x
-
         this.dz = this.player.controls.yawObject.position.z-this.mesh.position.z
         this.lenght = Math.sqrt(this.dx*this.dx+this.dz*this.dz)
 
@@ -89,14 +103,19 @@ export class Enemy{
         this.targetQuaternion = new THREE.Quaternion();
         this.rotationMatrix.lookAt(this.player.controls.yawObject.position, this.mesh.position, this.mesh.up);
         this.targetQuaternion.setFromRotationMatrix(this.rotationMatrix);
-        this.mesh.quaternion.rotateTowards(this.targetQuaternion, delta*2);
         this.mesh.position.x += this.dx*this.speed
         this.mesh.position.z += this.dz*this.speed
+        if(this.lenght > 3){
+            this.mesh.quaternion.rotateTowards(this.targetQuaternion, delta*2);
+
+        }
+
     }
-    update(delta){
+    update(dt,delta){
+        if(this.animationMixer !== null) this.animationMixer.update(delta);
         this.calculate();
-        this.movement(delta);
-        this.body.position.set(this.mesh.position.x, this.mesh.position.y+2, this.mesh.position.z);
+        this.movement(dt);
+        this.body.position.set(this.mesh.position.x, this.mesh.position.y+1.7, this.mesh.position.z);
         this.body.quaternion.copy(this.mesh.quaternion);
     }
     getMesh(){return this.mesh;}
