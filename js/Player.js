@@ -40,7 +40,7 @@ export class Player{
             let model = gltf.scene;
             model.position.set(0,0,0);
             model.rotation.set(0,0,0);
-            model.scale.set(0.1,0.1,0.1);
+            model.scale.set(0.08,0.08,0.08);
             mesh.add(model);
 
         }, undefined, function (error) {
