@@ -122,6 +122,41 @@ class Application {
         this.scene.fog = new THREE.Fog( 0xffffff, 10,30);
         this.scene.background=this.scene.fog.color
         this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
+
+        this.uiScene = new THREE.Scene();
+        this.uiCamera = new THREE.OrthographicCamera(
+            -1, 1, this.camera.aspect, -1 * this.camera.aspect, 1, 1000);
+
+        let mapLoader = new THREE.TextureLoader()
+        const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
+        const crosshair = mapLoader.load('./textures/crosshair/crosshair.png');
+        crosshair.anisotropy = maxAnisotropy;
+
+        this.sprite_ = new THREE.Sprite(
+            new THREE.SpriteMaterial({map: crosshair, color: 0xffffff, fog: false, depthTest: false, depthWrite: false}));
+        this.sprite_.scale.set(0.05, 0.085*this.camera.aspect, 1)
+        this.sprite_.position.set(0, 0, -10);
+
+        this.uiScene.add(this.sprite_);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // this.enemies = [
         //     new Enemy(this.spawner.getPosition(), 0.08,this.scene, this.world, this.player),
         //     new Enemy(this.spawner.getPosition(), 0.05,this.scene, this.world, this.player),
@@ -161,6 +196,7 @@ class Application {
 
             this.render();
             this.renderer.render(this.scene, this.camera);
+            this.renderer.render(this.uiScene, this.uiCamera);
             this.update(t-this.time);
             this.time = t;
         });
