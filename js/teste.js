@@ -6,6 +6,7 @@ import CannonDebugger from './teste/cannon-es-debugger.js';
 import {PointerLockControlsCannon} from './teste/PointerLockControlsCannon.js';
 import {Enemy} from "./Enemy.js";
 import {Player} from "./Player.js";
+import {EnemyManager} from "./EnemyManager.js";
 
 
 let lastCallTime = performance.now();
@@ -116,12 +117,17 @@ class Application {
         this.scene.add(ambientLight)
 
         this.render();
-        this.enemies = [
-            new Enemy({x:20,y:0,z:20}, 0.08,this.scene, this.world, this.player),
-            new Enemy({x:-30,y:0,z:30}, 0.05,this.scene, this.world, this.player),
-            new Enemy({x:40,y:0,z:-40},0.2,this.scene, this.world, this.player),
-            new Enemy({x:50,y:0,z:-50},0.1,this.scene, this.world, this.player)
-        ]
+
+
+        // this.scene.fog = new THREE.Fog( 0xffffff, 10,30);
+        // this.scene.background=this.scene.fog.color
+        this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
+        // this.enemies = [
+        //     new Enemy(this.spawner.getPosition(), 0.08,this.scene, this.world, this.player),
+        //     new Enemy(this.spawner.getPosition(), 0.05,this.scene, this.world, this.player),
+        //     new Enemy(this.spawner.getPosition(),0.07,this.scene, this.world, this.player),
+        //     new Enemy(this.spawner.getPosition(),0.03,this.scene, this.world, this.player)
+        // ]
 
         window.addEventListener('click', (event) => {
             this.player.shoot()
@@ -175,10 +181,11 @@ class Application {
             // }
         });
 
-        for (let i = 0; i < this.enemies.length; i++) {
-            this.enemies[i].update(dt,delta)
-        }
+        // for (let i = 0; i < this.enemies.length; i++) {
+        //     this.enemies[i].update(dt,delta)
+        // }
         this.boxMesh.position.copy(this.boxBody.position);
+        this.enemyManager.update(dt, delta)
         this.boxMesh.quaternion.copy(this.boxBody.quaternion);
 
         // Update ball positions
@@ -188,7 +195,7 @@ class Application {
         //
         // }
 
-        // this.cannonDebugger.update();
+        this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);

@@ -7,6 +7,8 @@ export class Enemy{
         this.mesh = this.load();
         this.mesh.position.set(position.x,position.y,position.z);
         this.mesh.scale.set(2,2,2);
+        this.mesh.name = "enemy"
+        this.isAlive = true;
         this.speed = speed;
         this.body = this.createBody();
         this.player = player;
@@ -20,6 +22,7 @@ export class Enemy{
             if(event.body===this.player.getBody()){
                 this.scene.remove(this.mesh)
                 this.world.removeBody(this.body)
+                this.isAlive = false;
             }else{
                 for (let i = 0; i < this.player.getBalls().length ; i++) {
                     if(event.body===this.player.getBalls()[i]){
@@ -27,9 +30,10 @@ export class Enemy{
                         this.world.removeBody(this.body)
                         this.scene.remove(this.player.getBallMeshes()[i])
                         this.world.removeBody(this.player.getBalls()[i])
-
                         this.player.getBallMeshes().splice(i,1)
                         this.player.getBalls().splice(i,1)
+                        this.isAlive = false;
+                        console.log(this.isAlive)
                     }
                 }
             }
