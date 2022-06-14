@@ -38,6 +38,34 @@ export class Enemy{
                 }
             }
         })
+        this.world.addEventListener('endContact', (event) => {
+            if (
+                (event.bodyA === this.body && event.bodyB === this.player.getBody()) ||
+                (event.bodyB === this.body && event.bodyA === this.player.getBody())
+            ) {
+                this.scene.remove(this.mesh)
+                this.world.removeBody(this.body)
+                this.isAlive = false;
+            }else{
+                for (let i = 0; i < this.player.getBalls().length ; i++) {
+                    if(
+                        (event.bodyA === this.body && event.bodyB === this.player.getBalls()[i]) ||
+                        (event.bodyB === this.body && event.bodyA === this.player.getBalls()[i])){
+                        this.scene.remove(this.mesh)
+                        this.world.removeBody(this.body)
+                        this.scene.remove(this.player.getBallMeshes()[i])
+                        this.world.removeBody(this.player.getBalls()[i])
+                        this.player.getBallMeshes().splice(i,1)
+                        this.player.getBalls().splice(i,1)
+                        this.isAlive = false;
+                        console.log(this.isAlive)
+                    }
+                }
+            }
+        })
+
+
+
     }
 
     load() {
@@ -111,7 +139,6 @@ export class Enemy{
         this.mesh.position.z += this.dz*this.speed
         if(this.lenght > 3){
             this.mesh.quaternion.rotateTowards(this.targetQuaternion, delta*2);
-
         }
 
     }
