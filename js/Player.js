@@ -15,6 +15,7 @@ export class Player{
         this.animationMixer = null;
         this.animation = null;
         this.ballMesh = this.loadBulletMesh();
+        this.ballTime = [];
     }
 
     createBody(){
@@ -51,16 +52,28 @@ export class Player{
 
     update(dt){
         this.controls.update(dt)
+        this.removeBalls()
         this.updateBallsPosition()
     }
 
     updateBallsPosition(){
         for (let i = 0; i < this.balls.length; i++) {
-            this.ballMeshes[i].position.copy(this.balls[i].position)
-            this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
-
+                this.ballMeshes[i].position.copy(this.balls[i].position)
+                this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
         }
     }
+
+    removeBalls(){
+        let time =  new Date().valueOf();
+        for (let i = 0; i < this.balls.length; i++) {
+            if(time-this.ballTime[i] >= 2000){
+                this.ballTime.splice(i,1);
+                this.balls.splice(i,1);
+                this.ballMeshes.splice(i,1);
+            }
+        }
+    }
+
 
     getMesh(){
         return this.controls.getObject()
@@ -92,6 +105,7 @@ export class Player{
 
             this.balls.push(ballBody)
             this.ballMeshes.push(ballMesh)
+            this.ballTime.push(new Date().valueOf())
 
             const shootDirection = this.getShootDirection()
             ballBody.velocity.set(
@@ -116,5 +130,9 @@ export class Player{
 
     getBallMeshes(){
         return this.ballMeshes
+    }
+
+    getBallTime(){
+        return this.ballTime
     }
 }

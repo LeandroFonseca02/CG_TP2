@@ -32,8 +32,8 @@ export class Enemy{
                         this.world.removeBody(this.player.getBalls()[i])
                         this.player.getBallMeshes().splice(i,1)
                         this.player.getBalls().splice(i,1)
+                        this.player.getBallTime().splice(i,1)
                         this.isAlive = false;
-                        console.log(this.isAlive)
                     }
                 }
             }
@@ -57,6 +57,7 @@ export class Enemy{
                         this.world.removeBody(this.player.getBalls()[i])
                         this.player.getBallMeshes().splice(i,1)
                         this.player.getBalls().splice(i,1)
+                        this.player.getBallTime().splice(i,1)
                         this.isAlive = false;
                         console.log(this.isAlive)
                     }
