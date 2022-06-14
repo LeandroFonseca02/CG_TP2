@@ -119,8 +119,8 @@ class Application {
         this.render();
 
 
-        // this.scene.fog = new THREE.Fog( 0xffffff, 10,30);
-        // this.scene.background=this.scene.fog.color
+        this.scene.fog = new THREE.Fog( 0xffffff, 10,30);
+        this.scene.background=this.scene.fog.color
         this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
         // this.enemies = [
         //     new Enemy(this.spawner.getPosition(), 0.08,this.scene, this.world, this.player),
@@ -195,7 +195,7 @@ class Application {
         //
         // }
 
-        this.cannonDebugger.update();
+        // this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);

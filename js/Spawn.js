@@ -3,7 +3,7 @@ import {Enemy} from "./Enemy.js";
 
 export class Spawn{
     constructor(player) {
-        this.radius = 10;
+        this.radius = 40;
         this.playerPosition = player.controls.yawObject.position
         this.player = player
 
