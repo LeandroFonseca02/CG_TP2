@@ -8,7 +8,7 @@ import CannonDebugger from './teste/cannon-es-debugger.js';
 import {Player} from "./Player.js";
 import {EnemyManager} from "./EnemyManager.js";
 import {Skybox} from "./Objects.js";
-import { Container, House, RigidModel, Sofa, Stop, WaterTower} from "./Models.js";
+import {Container, DeadTree, House, RigidModel, Sofa, Stop, WaterTower} from "./Models.js";
 
 
 let lastCallTime = performance.now();
@@ -253,7 +253,7 @@ class Application {
         //
         // }
 
-        // this.cannonDebugger.update();
+        this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);
@@ -284,9 +284,7 @@ let objs = [
     new Container({x:5,y:1.63,z:0}, {x:0,y:0,z:0}),
     new Sofa({x:8,y:1,z:2}, {x:0,y:0,z:0}),
     new Stop({x:2,y:1,z:8}, {x:0,y:0,z:0}),
+    new DeadTree({x:0,y:1,z:-8}, {x:0,y:0,z:0},4),
 
-    // new Enemy({x:-30,y:0,z:30}, 0.05),
-    // new Enemy({x:40,y:0,z:-40},0.2),
-    // new Enemy({x:50,y:0,z:-50},0.1)
 ];
 app.add(objs);

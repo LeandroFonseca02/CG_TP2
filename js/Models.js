@@ -729,4 +729,80 @@ export class Stop extends RigidModel{
 
 }
 
+export class DeadTree extends RigidModel{
+    constructor(position, rotation, type) {
+        super();
+        this.type = type;
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.2,0.2,0.2);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+        let url = './models/dead-tree/';
+
+        switch (this.type){
+            case 1:
+                url += 'dead-tree1.glb';
+                this.bodySize = new CANNON.Vec3(0.12, 0.7, 0.17);
+                break;
+            case 2:
+                url += 'dead-tree2.glb';
+                this.bodySize = new CANNON.Vec3(0.12, 0.7, 0.12);
+                break;
+            case 3:
+                url += 'dead-tree3.glb';
+                this.bodySize = new CANNON.Vec3(0.12, 0.7, 0.12);
+                break;
+            case 4:
+                url += 'dead-tree4.glb';
+                this.bodySize = new CANNON.Vec3(0.15, 0.7, 0.12);
+                break;
+        }
+
+
+        loader.load(url, function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.children[0].material.metalness = 0.2;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        // const halfExtents = new CANNON.Vec3(0.12, 0.7, 0.12);
+        console.log(this.bodySize)
+        const boxShape = new CANNON.Box(this.bodySize);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
 
