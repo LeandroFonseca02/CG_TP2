@@ -2,7 +2,8 @@ import {GLTFLoader} from './three/GLTFLoader.js';
 import * as THREE from './three/three.module.js';
 import {Water} from './three/Water2.js';
 import {Vector2} from './three/three.module.js';
-import {loadingManager} from './main.js';
+import * as CANNON from "./teste/cannon-es.js";
+import {loadingManager} from './teste.js';
 
 
 export class ModelAudio{
@@ -14,7 +15,10 @@ export class AnimatedModel{
     constructor(){}
 }
 
-
+export class RigidModel{
+    constructor() {
+    }
+}
 
 // classe que define os candeeiros do nosso cenário
 export class Lamp {
@@ -464,3 +468,265 @@ export class Boneco extends AnimatedModel{
     getMesh(){return this.mesh;}
 
 }
+
+export class House extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.4,0.4,0.4);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/house/house.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+    const halfExtents = new CANNON.Vec3(1.52, 1.2, 1.45);
+    const boxShape = new CANNON.Box(halfExtents);
+    const boxBody = new CANNON.Body({ mass: 0})
+    boxBody.addShape(boxShape)
+    boxBody.position.set(this.mesh.position.x+0.15, this.mesh.position.y+0.3, this.mesh.position.z-0.7)
+    return boxBody;
+}
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class WaterTower extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.25,0.25,0.25);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/water-tower/water-tower.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.3, 1.2, 0.3);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.3, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class Container extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.0075,0.0075,0.0075);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/container/container.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.75, 0.3, 0.38);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x+0.4, this.mesh.position.y-0.3, this.mesh.position.z+0.05)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class Sofa extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.2,0.2,0.2);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/sofa/sofa.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.1, 0.12, 0.36);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class Stop extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.07,0.07,0.07);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/stop/stop.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.03, 0.7, 0.03);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+

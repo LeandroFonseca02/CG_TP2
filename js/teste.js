@@ -1,15 +1,19 @@
 import * as THREE from './three/three.module.js';
 import Stats from './three/stats.module.js';
-import {OrbitControls} from './three/OrbitControls.js';
+// import {OrbitControls} from './three/OrbitControls.js';
 import * as CANNON from './teste/cannon-es.js';
 import CannonDebugger from './teste/cannon-es-debugger.js';
-import {PointerLockControlsCannon} from './teste/PointerLockControlsCannon.js';
-import {Enemy} from "./Enemy.js";
+// import {PointerLockControlsCannon} from './teste/PointerLockControlsCannon.js';
+// import {Enemy} from "./Enemy.js";
 import {Player} from "./Player.js";
 import {EnemyManager} from "./EnemyManager.js";
+import {Skybox} from "./Objects.js";
+import { Container, House, RigidModel, Sofa, Stop, WaterTower} from "./Models.js";
 
 
 let lastCallTime = performance.now();
+export const loadingManager = new THREE.LoadingManager();
+
 
 class Application {
     constructor() {
@@ -17,6 +21,7 @@ class Application {
         this.createScene();
     }
     createScene() {
+        this.gameEnable = false;
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(60,
             window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -64,7 +69,7 @@ class Application {
         this.world.addContactMaterial(physics_physics);
 
 
-        this.player = new Player(this.camera);
+        this.player = new Player(this.camera,this.scene,this.world);
         this.scene.add(this.player.getMesh())
         this.world.addBody(this.player.getBody())
 
@@ -119,7 +124,7 @@ class Application {
         this.render();
 
 
-        this.scene.fog = new THREE.Fog( 0xffffff, 10,30);
+        this.scene.fog = new THREE.FogExp2( 0x4c566a, 0.015);
         this.scene.background=this.scene.fog.color
         this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
 
@@ -156,7 +161,6 @@ class Application {
 
 
 
-
         // this.enemies = [
         //     new Enemy(this.spawner.getPosition(), 0.08,this.scene, this.world, this.player),
         //     new Enemy(this.spawner.getPosition(), 0.05,this.scene, this.world, this.player),
@@ -172,6 +176,16 @@ class Application {
             this.world.addBody(playerBalls[playerBalls.length-1])
         })
 
+        const progressBar = document.getElementById('progress-bar');
+        loadingManager.onProgress = function (url, loaded, total) {
+            progressBar.value = (loaded / total) * 100;
+        }
+        const progressBarContainer = document.querySelector('.progress-bar-container');
+        loadingManager.onLoad = function () {
+            progressBarContainer.style.display = 'none';
+        }
+
+
         const instructions = document.getElementById('instructions')
         instructions.addEventListener('click', () => {
            this.player.controls.lock()
@@ -180,11 +194,13 @@ class Application {
         this.player.controls.addEventListener('lock', () => {
             this.player.controls.enabled = true
             instructions.style.display = 'none'
+            this.gameEnable = true;
         })
 
         this.player.controls.addEventListener('unlock', () => {
             this.player.controls.enabled = false
             instructions.style.display = null
+            this.gameEnable = false;
         })
     }
 
@@ -197,8 +213,12 @@ class Application {
             this.render();
             this.renderer.render(this.scene, this.camera);
             this.renderer.render(this.uiScene, this.uiCamera);
-            this.update(t-this.time);
-            this.time = t;
+            if(this.gameEnable !== false){
+                this.update(t-this.time);
+                this.time = t;
+            }else{
+                this.player.controls.yawObject.rotation.y += 0.1;
+            }
         });
     }
 
@@ -224,6 +244,8 @@ class Application {
         this.enemyManager.update(dt, delta)
         this.boxMesh.quaternion.copy(this.boxBody.quaternion);
 
+
+
         // Update ball positions
         // for (let i = 0; i < this.balls.length; i++) {
         //     this.ballMeshes[i].position.copy(this.balls[i].position)
@@ -231,7 +253,7 @@ class Application {
         //
         // }
 
-        this.cannonDebugger.update();
+        // this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);
@@ -239,10 +261,10 @@ class Application {
 
     add(mesh) {
         if (Array.isArray(mesh)){
-            for(var index in mesh){
-                // if(mesh[index] instanceof Enemy){
-                //     this.world.addBody(mesh[index].getBody())
-                // }
+            for(let index in mesh){
+                if(mesh[index] instanceof RigidModel){
+                    this.world.addBody(mesh[index].getBody())
+                }
                 this.objects.push(mesh[index]);
                 this.scene.add( mesh[index].getMesh() );
             }
@@ -256,7 +278,13 @@ class Application {
 
 let app = new Application();
 let objs = [
-    // new Enemy({x:20,y:0,z:20}, 0.08),
+    new Skybox({width:250,height:250,depth:250},{x:0,y:0,z:0}),
+    new House({x:5,y:1,z:5}, {x:0,y:0,z:0}),
+    new WaterTower({x:0,y:1,z:5}, {x:0,y:0,z:0}),
+    new Container({x:5,y:1.63,z:0}, {x:0,y:0,z:0}),
+    new Sofa({x:8,y:1,z:2}, {x:0,y:0,z:0}),
+    new Stop({x:2,y:1,z:8}, {x:0,y:0,z:0}),
+
     // new Enemy({x:-30,y:0,z:30}, 0.05),
     // new Enemy({x:40,y:0,z:-40},0.2),
     // new Enemy({x:50,y:0,z:-50},0.1)

@@ -4,7 +4,7 @@ import {PointerLockControlsCannon} from "./teste/PointerLockControlsCannon.js";
 import {GLTFLoader} from "./three/GLTFLoader.js";
 
 export class Player{
-    constructor(camera) {
+    constructor(camera,scene,world) {
         this.radius = 0.3
         this.body = this.createBody()
         this.controls = new PointerLockControlsCannon(camera, this.body)
@@ -16,6 +16,9 @@ export class Player{
         this.animation = null;
         this.ballMesh = this.loadBulletMesh();
         this.ballTime = [];
+        this.scene = scene;
+        this.world = world;
+        this.controls.yawObject.rotation.set(0,Math.PI,0)
     }
 
     createBody(){
@@ -67,6 +70,8 @@ export class Player{
         let time =  new Date().valueOf();
         for (let i = 0; i < this.balls.length; i++) {
             if(time-this.ballTime[i] >= 2000){
+                this.scene.remove(this.ballMeshes[i]);
+                this.world.removeBody(this.balls[i]);
                 this.ballTime.splice(i,1);
                 this.balls.splice(i,1);
                 this.ballMeshes.splice(i,1);
