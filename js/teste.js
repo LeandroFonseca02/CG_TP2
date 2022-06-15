@@ -231,7 +231,7 @@ class Application {
         //
         // }
 
-        // this.cannonDebugger.update();
+        this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);
