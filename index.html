@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<base href=".">
+<base href="." xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Three.js - Computacao Grafica TP2</title>
     <style>
-        canvas { width: 100%; height: 100% }
         .progress-bar-container{
             position: absolute;
             left: 50%;
@@ -61,7 +60,7 @@
             justify-content: center;
             align-items: center;
 
-            background-color: rgba(0, 0, 0, 100);
+            background-color: rgba(0,0,0,100);
             color: #ffffff;
             text-align: center;
 
@@ -73,16 +72,16 @@
     </style>
 </head>
 <body>
+<div id="container"></div>
 <div id="instructions">
     <span>Click to play</span>
     <br />
     (W,A,S,D = Andar, SPACE = Saltar, MOUSE = Virar a face, CLICK = Disparar)
 
 </div>
-<div id="gameover">
+<div id="gameover" value="">
     <span>Game Over</span>
-    <br />
-    YOU DIED
+    <br>Voce foi possuido por um fantasma!
     <input type="button" value="Retry" onClick="window.location.reload(true)">
 </div>
 <div class="progress-bar-container">

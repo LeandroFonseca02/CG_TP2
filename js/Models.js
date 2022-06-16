@@ -507,7 +507,7 @@ export class House extends RigidModel{
         const boxShape = new CANNON.Box(halfExtents);
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
-        boxBody.position.set(this.mesh.position.x+0.15, this.mesh.position.y+0.3, this.mesh.position.z-0.7);
+        boxBody.position.set(this.mesh.position.x+0.65, this.mesh.position.y+0.3, this.mesh.position.z-0.8);
         boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
         return boxBody;
 }
@@ -561,6 +561,7 @@ export class WaterTower extends RigidModel{
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
         boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.3, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
         return boxBody;
     }
 
@@ -612,7 +613,8 @@ export class Container extends RigidModel{
         const boxShape = new CANNON.Box(halfExtents);
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
-        boxBody.position.set(this.mesh.position.x+0.4, this.mesh.position.y-0.3, this.mesh.position.z+0.05)
+        boxBody.position.set(this.mesh.position.x-0.39, this.mesh.position.y-0.3, this.mesh.position.z+0.2)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), -this.mesh.rotation.y)
         return boxBody;
     }
 
@@ -665,6 +667,7 @@ export class Sofa extends RigidModel{
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
         boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
         return boxBody;
     }
 
@@ -712,11 +715,11 @@ export class Stop extends RigidModel{
     }
 
     createBody(){
-        const halfExtents = new CANNON.Vec3(0.03, 0.7, 0.03);
+        const halfExtents = new CANNON.Vec3(0.03, 0.02, 0.3);
         const boxShape = new CANNON.Box(halfExtents);
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
-        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z+0.2)
         return boxBody;
     }
 
@@ -791,6 +794,7 @@ export class DeadTree extends RigidModel{
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
         boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
         return boxBody;
     }
 
@@ -843,6 +847,7 @@ export class Car extends RigidModel{
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
         boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), -this.mesh.rotation.y)
         return boxBody;
     }
 
@@ -895,6 +900,7 @@ export class Phone extends RigidModel{
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
         boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
         return boxBody;
     }
 
@@ -947,6 +953,65 @@ export class WashingMachine extends RigidModel{
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
         boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class Ground extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(1,1,1);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+        let alpha = 20;
+
+        loader.load('./models/ground/ground.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.children[0].material.map.repeat = new Vector2(alpha,alpha)
+            model.children[0].material.metalnessMap.repeat = new Vector2(alpha,alpha)
+            model.children[0].material.normalMap.repeat = new Vector2(alpha,alpha)
+            model.children[0].material.roughnessMap.repeat = new Vector2(alpha,alpha)
+            model.position.set(0,1,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(8, 1, 8);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
         return boxBody;
     }
 

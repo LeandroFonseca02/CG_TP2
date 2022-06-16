@@ -11,7 +11,7 @@ import {Skybox} from "./Objects.js";
 import {
     Car,
     Container,
-    DeadTree,
+    DeadTree, Ground,
     House,
     Phone,
     RigidModel,
@@ -53,7 +53,9 @@ class Application {
         document.body.appendChild(this.renderer.domElement);
         this.stats = Stats()
         document.body.appendChild(this.stats.dom)
-        // this.portalManager = new PortalManager(window,this.scene,this.renderer,this.camera);
+        this.renderer.domElement.style.width = 99.2 + "%";
+        this.renderer.domElement.style.height = 85 + "%";
+
         this.world = new CANNON.World();
         this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
         this.world.defaultContactMaterial.contactEquationRelaxation = 4
@@ -63,9 +65,9 @@ class Application {
         const solver = new CANNON.GSSolver()
         solver.iterations = 7
         solver.tolerance = 0.1
-        // this.world.solver = new CANNON.SplitSolver(solver)
+        this.world.solver = new CANNON.SplitSolver(solver)
         // use this to test non-split solver
-        // world.solver = solver
+        this.world.solver = solver
 
         this.world.gravity.set(0, -50, 0)
 
@@ -98,8 +100,8 @@ class Application {
         const z = 0
         this.boxBody.position.set(x, y, z)
         this.boxMesh.position.copy(this.boxBody.position)
-        this.world.addBody(this.boxBody)
-        this.scene.add(this.boxMesh)
+        // this.world.addBody(this.boxBody)
+        // this.scene.add(this.boxMesh)
 
 
         const ambientLight = new THREE.AmbientLight(0xfdffe1, 0.4);
@@ -164,19 +166,6 @@ class Application {
         this.formattedTime = null;
 
 
-
-
-
-
-
-
-        // this.enemies = [
-        //     new Enemy(this.spawner.getPosition(), 0.08,this.scene, this.world, this.player),
-        //     new Enemy(this.spawner.getPosition(), 0.05,this.scene, this.world, this.player),
-        //     new Enemy(this.spawner.getPosition(),0.07,this.scene, this.world, this.player),
-        //     new Enemy(this.spawner.getPosition(),0.03,this.scene, this.world, this.player)
-        // ]
-
         window.addEventListener('click', (event) => {
             this.player.shoot()
             const playerBalls = this.player.getBalls()
@@ -220,8 +209,9 @@ class Application {
         this.score.style.width = 200;
         this.score.style.height = 200;
         this.score.innerHTML = "Score: " + this.gameScore;
-        this.score.style.top = 20 + 'px';
+        this.score.style.top = 15 + 'px';
         this.score.style.left = 200 + 'px';
+        this.score.style.fontSize = 30 + 'px'
         document.body.appendChild(this.score);
 
         this.gameOverDiv = document.getElementById("gameover")
@@ -241,7 +231,7 @@ class Application {
                 if(this.gameOver === true){
                     this.gameEnable = false;
                     this.gameOverDiv.style.display = 'inline';
-                    // console.log("Game Over! Tempo Sobrevivido: " + this.playedTime + " Score: " + this.gameScore)
+                    this.score.style.color = "white";
                 }else{
                     this.update(t-this.time);
                     this.time = t;
@@ -266,24 +256,13 @@ class Application {
             //     object.update(delta);
             // } else{
             object.update();
-            // }
         });
 
-        // for (let i = 0; i < this.enemies.length; i++) {
-        //     this.enemies[i].update(dt,delta)
-        // }
-        this.boxMesh.position.copy(this.boxBody.position);
-        this.enemyManager.update(dt, delta)
-        this.boxMesh.quaternion.copy(this.boxBody.quaternion);
+        // this.boxMesh.position.copy(this.boxBody.position);
+        // this.enemyManager.update(dt, delta, this.playedTime)
+        // this.boxMesh.quaternion.copy(this.boxBody.quaternion);
 
 
-
-        // Update ball positions
-        // for (let i = 0; i < this.balls.length; i++) {
-        //     this.ballMeshes[i].position.copy(this.balls[i].position)
-        //     this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
-        //
-        // }
         this.gameScore = this.enemyManager.getGameScore();
         this.gameOver = this.enemyManager.getGameOver();
         this.formattedTime = this.getFormattedTime()
@@ -301,6 +280,10 @@ class Application {
             minutes = parseInt( this.playedTime/60);
         }
         let seconds = parseInt(this.playedTime - minutes*60);
+        if(seconds < 10){
+            seconds = "0" + seconds;
+        }
+
         return "" + minutes + ":" + seconds;
     }
 
@@ -325,39 +308,57 @@ class Application {
 let app = new Application();
 let objs = [
     new Skybox({width:250,height:250,depth:250},{x:0,y:0,z:0}),
-    new House({x:5.790,y:1,z:-5.900}, {x:0,y:-0.550,z:0}),
+    new Ground({x:0,y:0,z:0}, {x:0,y:0,z:0}),
+    new House({x:5.790,y:1,z:-5.900}, {x:0,y:Math.PI*2-0.550,z:0}),
     new WaterTower({x:6.930,y:1,z:6.9}, {x:0,y:0.530,z:0}),
     new Container({x:-6.360,y:1.63,z:-7.170}, {x:-3.142,y:-0.618,z:-3.142}),
     new Sofa({x:-6.330,y:1,z:-6.110}, {x:0,y:0,z:0}),
     new Stop({x:-6.220,y:1.130,z:-6.400}, {x:1.680,y:2.440,z:-0.480}),
-    new DeadTree({x:3.890,y:1,z:-7.360}, {x:0,y:0,z:0},4),
-    new DeadTree({x:1.270,y:1,z:-5.380}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-1.860,y:1,z:-5.380}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-5.380,y:1,z:-5.380}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-3.430,y:1,z:-6.280}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-0.50, y:1,z:-5.380}, {x:0,y:0,z:0},4),
 
-    new DeadTree({x:3.890,y:1,z:7.360}, {x:0,y:0,z:0},4),
-    new DeadTree({x:1.270,y:1,z:5.380}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-1.860,y:1,z:5.380}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-5.380,y:1,z:5.380}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-3.430,y:1,z:6.280}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-0.50, y:1,z:5.380}, {x:0,y:0,z:0},4),
+    //esquerda do armazem
+    new DeadTree({x:3.890,y:1,z:-7.260}, {x:0,y:1,z:0},4),
+    new DeadTree({x:1.270,y:1,z:-7.160}, {x:0,y:2,z:0},2),
+    new DeadTree({x:-1.860,y:1,z:-7.340}, {x:0,y:3,z:0},4),
+    new DeadTree({x:-5.380,y:1,z:-7.420}, {x:0,y:4,z:0},2),
+    new DeadTree({x:-3.430,y:1,z:-7.280}, {x:0,y:5,z:0},1),
+    new DeadTree({x:-5.090, y:1,z:-5.180}, {x:0,y:6,z:0},4),
+    new DeadTree({x:2.270, y:1,z:-5.480}, {x:0,y:7,z:0},4),
+    new DeadTree({x:-0.020, y:1,z:-5.080}, {x:0,y:8,z:0},2),
+    new DeadTree({x:3.890, y:1,z:-5.680}, {x:0,y:9,z:0},4),
+    new DeadTree({x:-2.370, y:1,z:-5.780}, {x:0,y:10,z:0},1),
 
-    new DeadTree({x:-6.590, y:1,z:-2.390}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-6.590, y:1,z:-0.210}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-6.590, y:1,z:3.120}, {x:0,y:0,z:0},4),
-    new DeadTree({x:-6.590, y:1,z:-4.760}, {x:0,y:0,z:0},4),
+    //lado contrário da esquerda do armazém
+    new DeadTree({x:3.890,y:1,z:7.360}, {x:0,y:1,z:0},2),
+    new DeadTree({x:1.270,y:1,z:7.260}, {x:0,y:2,z:0},2),
+    new DeadTree({x:-1.860,y:1,z:57.760}, {x:0,y:3,z:0},4),
+    new DeadTree({x:-5.380,y:1,z:7.560}, {x:0,y:4,z:0},4),
+    new DeadTree({x:-3.430,y:1,z:7.460}, {x:0,y:5,z:0},1),
+    new DeadTree({x:-0.50, y:1,z:7.060}, {x:0,y:6,z:0},4),
+    new DeadTree({x:-5.090, y:1,z:5.780}, {x:0,y:7,z:0},1),
+    new DeadTree({x:2.270, y:1,z:5.680}, {x:0,y:8,z:0},1),
+    new DeadTree({x:-0.020, y:1,z:5.980}, {x:0,y:9,z:0},2),
+    new DeadTree({x:3.890, y:1,z:5.480}, {x:0,y:10,z:0},4),
+    new DeadTree({x:-2.370, y:1,z:5.180}, {x:0,y:11,z:0},4),
 
-    new DeadTree({x:6.590, y:1,z:-2.390}, {x:0,y:0,z:0},4),
-    new DeadTree({x:6.590, y:1,z:-0.210}, {x:0,y:0,z:0},4),
-    new DeadTree({x:6.590, y:1,z:3.120}, {x:0,y:0,z:0},4),
-    new DeadTree({x:6.590, y:1,z:-4.760}, {x:0,y:0,z:0},4),
+    //lado contrário da direita do armazém
+    new DeadTree({x:-6.590, y:1,z:-2.390}, {x:0,y:1,z:0},4),
+    new DeadTree({x:-6.690, y:1,z:-0.210}, {x:0,y:2,z:0},2),
+    new DeadTree({x:-6.490, y:1,z:3.120}, {x:0,y:3,z:0},2),
+    new DeadTree({x:-6.790, y:1,z:-4.760}, {x:0,y:4,z:0},4),
+    new DeadTree({x:-4.390, y:1,z:-2.390}, {x:0,y:1,z:0},1),
+    new DeadTree({x:-4.890, y:1,z:-0.210}, {x:0,y:2,z:0},2),
+    new DeadTree({x:-4.290, y:1,z:3.120}, {x:0,y:3,z:0},1),
 
 
-
-
-
+    //esquerda do armazem
+    new DeadTree({x:6.590, y:1,z:-2.390}, {x:0,y:1,z:0},2),
+    new DeadTree({x:6.190, y:1,z:-0.210}, {x:0,y:2,z:0},1),
+    new DeadTree({x:6.790, y:1,z:3.120}, {x:0,y:3,z:0},4),
+    new DeadTree({x:6.280, y:1,z:-4.220}, {x:0,y:4,z:0},1),
+    new DeadTree({x:4.690, y:1,z:-2.390}, {x:0,y:1,z:0},4),
+    new DeadTree({x:4.190, y:1,z:-0.210}, {x:0,y:2,z:0},1),
+    new DeadTree({x:4.590, y:1,z:3.120}, {x:0,y:3,z:0},2),
+    new DeadTree({x:4.380, y:1,z:-4.220}, {x:0,y:4,z:0},2),
 
     new WashingMachine({x:-5.440,y:1,z:-6.760}, {x:-3.141,y:2.412,z:3.141}),
     new Car({x:6.150,y:1,z:6.590}, {x:-3.142,y:0.842,z:-3.142}),

@@ -6,7 +6,7 @@ export class EnemyManager{
         this.scene = scene;
         this.world = world;
         this.player = player;
-        this.spawnTime = 2500;
+        this.spawnTime = 3000;
         this.lastSpawn = 0;
         this.time = 0;
         this.speed = 0.03;
@@ -14,9 +14,10 @@ export class EnemyManager{
         this.enemies = [];
         this.gameScore = 0;
         this.gameOver = false;
+        this.minutesPlayed = 0;
     }
 
-    update(dt, delta){
+    update(dt, delta, playedTime){
         const spawnTimer = new Date().valueOf();
         if(this.lastSpawn===0 || spawnTimer-this.lastSpawn>this.spawnTime){
             let enemy = new Enemy(this.spawn.getPosition(), this.speed, this.scene, this.world, this.player);
@@ -24,6 +25,12 @@ export class EnemyManager{
             this.world.addBody(enemy.getBody());
             this.enemies.push(enemy);
             this.lastSpawn = spawnTimer;
+        }
+
+        if(parseInt( playedTime/60) > this.minutesPlayed){
+            this.minutesPlayed++;
+            this.spawnTime -= 350;
+            this.speed += 0.005;
         }
 
         for (let i = 0; i < this.enemies.length; i++) {

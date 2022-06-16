@@ -44,7 +44,7 @@ export class Player{
             let model = gltf.scene;
             model.position.set(0,0,0);
             model.rotation.set(0,0,0);
-            model.scale.set(0.08,0.08,0.08);
+            model.scale.set(0.03,0.03,0.03);
             mesh.add(model);
 
         }, undefined, function (error) {
@@ -99,7 +99,7 @@ export class Player{
         const shot = new Date().valueOf();
         if(this.lastShot===0 || shot-this.lastShot>300){
             const shootVelocity = 60
-            const ballShape = new CANNON.Sphere(0.1)
+            const ballShape = new CANNON.Sphere(0.03)
             const ballGeometry = new THREE.SphereBufferGeometry(ballShape.radius, 32, 32)
             const material = new THREE.MeshNormalMaterial();
             const ballBody = new CANNON.Body({ mass: 0.1})
