@@ -503,12 +503,13 @@ export class House extends RigidModel{
     }
 
     createBody(){
-    const halfExtents = new CANNON.Vec3(1.52, 1.2, 1.45);
-    const boxShape = new CANNON.Box(halfExtents);
-    const boxBody = new CANNON.Body({ mass: 0})
-    boxBody.addShape(boxShape)
-    boxBody.position.set(this.mesh.position.x+0.15, this.mesh.position.y+0.3, this.mesh.position.z-0.7)
-    return boxBody;
+        const halfExtents = new CANNON.Vec3(1.45, 1.2, 1.52);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x+0.15, this.mesh.position.y+0.3, this.mesh.position.z-0.7);
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
+        return boxBody;
 }
 
     update(){
@@ -786,8 +787,6 @@ export class DeadTree extends RigidModel{
     }
 
     createBody(){
-        // const halfExtents = new CANNON.Vec3(0.12, 0.7, 0.12);
-        console.log(this.bodySize)
         const boxShape = new CANNON.Box(this.bodySize);
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)
@@ -805,4 +804,256 @@ export class DeadTree extends RigidModel{
 
 }
 
+export class Grave extends RigidModel{
+    constructor(position, rotation, type) {
+        super();
+        this.type = type;
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.05,0.05,0.05);
+        this.body = this.createBody();
 
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+        let url = './models/graves/';
+
+        switch (this.type){
+            case 1:
+                url += 'grave1.glb';
+                this.bodySize = new CANNON.Vec3(0.12, 0.1, 0.07);
+                break;
+            case 2:
+                url += 'grave2.glb';
+                this.bodySize = new CANNON.Vec3(0.08, 0.7, 0.08);
+                break;
+            case 3:
+                url += 'grave3.glb';
+                this.bodySize = new CANNON.Vec3(0.06, 0.5, 0.06);
+                break;
+            case 4:
+                url += 'grave4.glb';
+                this.bodySize = new CANNON.Vec3(0.08, 0.2, 0.08);
+                break;
+            case 5:
+                url += 'grave5.glb';
+                this.bodySize = new CANNON.Vec3(0.09, 0.4, 0.09);
+                break;
+            case 6:
+                url += 'grave6.glb';
+                this.bodySize = new CANNON.Vec3(0.04, 0.25, 0.09);
+                break;
+            case 7:
+                url += 'grave7.glb';
+                this.bodySize = new CANNON.Vec3(0.09, 0.5, 0.09);
+                break;
+            case 8:
+                url += 'grave8.glb';
+                this.bodySize = new CANNON.Vec3(0.04, 0.3, 0.1);
+                break;
+            case 9:
+                url += 'grave9.glb';
+                this.bodySize = new CANNON.Vec3(0.07, 0.3, 0.07);
+                break;
+            case 10:
+                url += 'grave10.glb';
+                this.bodySize = new CANNON.Vec3(0.12, 0.15, 0.08);
+                break;
+        }
+
+
+        loader.load(url, function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.children[0].material.metalness = 0.2;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const boxShape = new CANNON.Box(this.bodySize);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class Car extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.25,0.25,0.25);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/car/car.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.25, 0.3, 0.45);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+0.1, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class Phone extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.05,0.05,0.05);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/phone/phone.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.05, 0.05, 0.05);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
+
+export class WashingMachine extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.2,0.2,0.2);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/washing-machine/washing-machine.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.position.set(0,0.6,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.1, 0.25, 0.1);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
