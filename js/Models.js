@@ -492,6 +492,8 @@ export class House extends RigidModel{
                 }
             })
             const model = gltf.scene;
+            model.children[0].children[0].material.metalness = 0.4;
+            model.children[0].children[1].material.metalness = 0.4;
             model.position.set(0,0,0);
             model.rotation.set(0,0,0);
             model.scale.set(1,1,1);
@@ -545,6 +547,7 @@ export class WaterTower extends RigidModel{
                 }
             })
             const model = gltf.scene;
+            model.children[0].material.metalness = 0.6;
             model.position.set(0,0,0);
             model.rotation.set(0,0,0);
             model.scale.set(1,1,1);
@@ -831,6 +834,7 @@ export class Car extends RigidModel{
                 }
             })
             const model = gltf.scene;
+            model.children[0].children[0].material.metalness = 0
             model.position.set(0,0,0);
             model.rotation.set(0,0,0);
             model.scale.set(1,1,1);
@@ -1040,7 +1044,7 @@ export class Fence extends RigidModel{
         let loader = new GLTFLoader(loadingManager);
         let mesh = new THREE.Mesh();
 
-        loader.load('./models/fence/fence.glb', function (gltf) {
+        loader.load('./models/fence/fence-wall.glb', function (gltf) {
             gltf.scene.traverse(function(child) {
                 if (child.isMesh) {
                     child.castShadow = true;
@@ -1060,7 +1064,7 @@ export class Fence extends RigidModel{
     }
 
     createBody(){
-        const halfExtents = new CANNON.Vec3(0.2, 0.8, 0.02);
+        const halfExtents = new CANNON.Vec3(9.4, 0.8, 0.1);
         const boxShape = new CANNON.Box(halfExtents);
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)

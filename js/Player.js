@@ -126,6 +126,8 @@ export class Player{
             ballBody.position.set(x, y, z)
             ballMesh.position.copy(ballBody.position)
             this.lastShot=shot;
+            this.scene.add(this.ballMeshes[this.ballMeshes.length-1]);
+            this.world.addBody(this.balls[this.balls.length-1]);
         }
     }
 

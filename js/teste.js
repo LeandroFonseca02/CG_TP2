@@ -116,7 +116,7 @@ class Application {
         dirLight.name = "dirlight";
 
         dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 1024 * 2;
+        dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 512 * 2;
 
         var d = 30;
 
@@ -127,7 +127,7 @@ class Application {
         //
         dirLight.shadow.camera.near = 0.001; // default
         dirLight.shadow.camera.far = 150;
-        dirLight.shadow.bias = 0.00001;
+        dirLight.shadow.bias = -0.00001;
 
 
         this.scene.add(dirLight);
@@ -168,10 +168,6 @@ class Application {
 
         window.addEventListener('click', (event) => {
             this.player.shoot()
-            const playerBalls = this.player.getBalls()
-            const playerBallMeshes = this.player.getBallMeshes()
-            this.scene.add(playerBallMeshes[playerBallMeshes.length-1])
-            this.world.addBody(playerBalls[playerBalls.length-1])
         })
 
         const progressBar = document.getElementById('progress-bar');
@@ -303,7 +299,7 @@ let objs = [
     new Skybox({width:250,height:250,depth:250},{x:0,y:0,z:0}),
     new Ground({x:0,y:0,z:0}, {x:0,y:0,z:0}),
     new House({x:5.790,y:1,z:-5.900}, {x:0,y:Math.PI*2-0.550,z:0}),
-    new WaterTower({x:6.930,y:1,z:6.9}, {x:0,y:0.530,z:0}),
+    new WaterTower({x:6.930,y:0.95,z:6.9}, {x:0,y:0.530,z:0}),
     new Container({x:-6.360,y:1.63,z:-7.170}, {x:-3.142,y:-0.618,z:-3.142}),
     new Sofa({x:-6.330,y:1,z:-6.110}, {x:0,y:0,z:0}),
     new Stop({x:-6.220,y:1.130,z:-6.400}, {x:1.680,y:2.440,z:-0.480}),
@@ -355,7 +351,11 @@ let objs = [
 
     new WashingMachine({x:-5.440,y:1,z:-6.760}, {x:-3.141,y:2.412,z:3.141}),
     new Car({x:6.150,y:1,z:6.590}, {x:-3.142,y:0.842,z:-3.142}),
-    new Fence({x:2,y:1,z:0}, {x:0,y:0,z:0}),
+    new Fence({x:9.4,y:1,z:0}, {x:0,y:-Math.PI/2,z:0}),
+    new Fence({x:-9.4,y:1,z:0}, {x:0,y:Math.PI/2,z:0}),
+    new Fence({x:0,y:1,z:9.4}, {x:0,y:0,z:0}),
+    new Fence({x:0,y:1,z:-9.4}, {x:0,y:0,z:0}),
+
 
 
 ];
