@@ -5,8 +5,8 @@ import * as CANNON from "./teste/cannon-es.js";
 export class Enemy{
     constructor(position, speed, scene, world, player) {
         this.mesh = this.load();
-        this.mesh.position.set(position.x,position.y,position.z);
-        this.mesh.scale.set(2,2,2);
+        this.mesh.position.set(position.x,position.y+0.5,position.z);
+        this.mesh.scale.set(1,1,1);
         this.mesh.name = "enemy"
         this.isAlive = true;
         this.speed = speed;
@@ -14,6 +14,7 @@ export class Enemy{
         this.player = player;
         this.animationMixer = null;
         this.animation = null;
+        this.playerDead = false;
         this.scene = scene
         this.world = world
         this.scene.add(this.mesh)
@@ -22,7 +23,8 @@ export class Enemy{
             if(event.body===this.player.getBody()){
                 this.scene.remove(this.mesh)
                 this.world.removeBody(this.body)
-                this.isAlive = false;
+                // this.isAlive = false;
+                this.playerDead = true;
             }else{
                 for (let i = 0; i < this.player.getBalls().length ; i++) {
                     if(event.body===this.player.getBalls()[i]){
@@ -45,7 +47,8 @@ export class Enemy{
             ) {
                 this.scene.remove(this.mesh)
                 this.world.removeBody(this.body)
-                this.isAlive = false;
+                // this.isAlive = false;
+                this.playerDead = true;
             }else{
                 for (let i = 0; i < this.player.getBalls().length ; i++) {
                     if(
@@ -59,7 +62,6 @@ export class Enemy{
                         this.player.getBalls().splice(i,1)
                         this.player.getBallTime().splice(i,1)
                         this.isAlive = false;
-                        console.log(this.isAlive)
                     }
                 }
             }
@@ -106,12 +108,12 @@ export class Enemy{
     }
 
     createBody(){
-        const halfExtents = new CANNON.Vec3(0.5, 0.6, 0.5);
+        const halfExtents = new CANNON.Vec3(0.25, 0.3, 0.25);
         const boxShape = new CANNON.Box(halfExtents);
         const boxGeometry = new THREE.BoxBufferGeometry(halfExtents.x * 2, halfExtents.y * 2, halfExtents.z * 2);
         const boxBody = new CANNON.Body({ isTrigger: true})
         boxBody.addShape(boxShape)
-        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+1.7, this.mesh.position.z)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y+1, this.mesh.position.z)
         return boxBody;
     }
 
@@ -147,7 +149,7 @@ export class Enemy{
         if(this.animationMixer !== null) this.animationMixer.update(delta);
         this.calculate();
         this.movement(dt);
-        this.body.position.set(this.mesh.position.x, this.mesh.position.y+1.7, this.mesh.position.z);
+        this.body.position.set(this.mesh.position.x, this.mesh.position.y+1, this.mesh.position.z);
         this.body.quaternion.copy(this.mesh.quaternion);
     }
     getMesh(){return this.mesh;}

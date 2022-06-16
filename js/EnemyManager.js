@@ -12,6 +12,8 @@ export class EnemyManager{
         this.speed = 0.08;
         this.spawn = new Spawn(this.player);
         this.enemies = [];
+        this.gameScore = 0;
+        this.gameOver = false;
     }
 
     update(dt, delta){
@@ -27,9 +29,15 @@ export class EnemyManager{
         for (let i = 0; i < this.enemies.length; i++) {
             if(this.enemies[i].isAlive === false){
                 this.enemies.splice(i,1);
-            }else{
+                this.gameScore += 100;
+            }else if(this.enemies[i].playerDead === true){
+                this.gameOver = true;
+            }else {
                 this.enemies[i].update(dt, delta);
             }
         }
     }
+
+    getGameScore(){return this.gameScore;}
+    getGameOver(){return this.gameOver;}
 }

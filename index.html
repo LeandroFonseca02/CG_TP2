@@ -61,7 +61,7 @@
             justify-content: center;
             align-items: center;
 
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 100);
             color: #ffffff;
             text-align: center;
 
@@ -79,11 +79,12 @@
     (W,A,S,D = Andar, SPACE = Saltar, MOUSE = Virar a face, CLICK = Disparar)
 
 </div>
-<!--<div id="gameover">-->
-<!--    <span>Game Over</span>-->
-<!--    <br />-->
-<!--    YOU DIED-->
-<!--</div>-->
+<div id="gameover" score = "0">
+    <span>Game Over</span>
+    <br />
+    YOU DIED
+    <input type="button" value="Retry" onClick="window.location.reload(true)">
+</div>
 <div class="progress-bar-container">
     <label for="progress-bar">Loading...</label>
     <progress id="progress-bar" value="0" max="100"></progress>
