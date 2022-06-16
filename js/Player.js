@@ -1,6 +1,6 @@
 import * as THREE from "./three/three.module.js";
-import * as CANNON from "./teste/cannon-es.js";
-import {PointerLockControlsCannon} from "./teste/PointerLockControlsCannon.js";
+import * as CANNON from "./cannon/cannon-es.js";
+import {PointerLockControlsCannon} from "./cannon/PointerLockControlsCannon.js";
 import {GLTFLoader} from "./three/GLTFLoader.js";
 
 export class Player{

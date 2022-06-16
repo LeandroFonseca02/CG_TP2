@@ -1,7 +1,7 @@
 import {GLTFLoader} from './three/GLTFLoader.js';
 import * as THREE from './three/three.module.js';
 import {Vector2} from './three/three.module.js';
-import * as CANNON from "./teste/cannon-es.js";
+import * as CANNON from "./cannon/cannon-es.js";
 import {loadingManager} from './main.js';
 
 

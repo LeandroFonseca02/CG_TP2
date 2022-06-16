@@ -1,7 +1,7 @@
 import * as THREE from './three/three.module.js';
 import Stats from './three/stats.module.js';
-import * as CANNON from './teste/cannon-es.js';
-import CannonDebugger from './teste/cannon-es-debugger.js';
+import * as CANNON from './cannon/cannon-es.js';
+import CannonDebugger from './cannon/cannon-es-debugger.js';
 import {Player} from "./Player.js";
 import {EnemyManager} from "./EnemyManager.js";
 import {Skybox} from "./Objects.js";
