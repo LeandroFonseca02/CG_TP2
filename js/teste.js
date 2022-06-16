@@ -8,7 +8,19 @@ import CannonDebugger from './teste/cannon-es-debugger.js';
 import {Player} from "./Player.js";
 import {EnemyManager} from "./EnemyManager.js";
 import {Skybox} from "./Objects.js";
-import {Container, DeadTree, House, RigidModel, Sofa, Stop, WaterTower} from "./Models.js";
+import {
+    Car,
+    Container,
+    DeadTree,
+    Grave,
+    House,
+    Phone,
+    RigidModel,
+    Sofa,
+    Stop,
+    WashingMachine,
+    WaterTower
+} from "./Models.js";
 
 
 let lastCallTime = performance.now();
@@ -144,15 +156,13 @@ class Application {
 
         this.uiScene.add(this.sprite_);
 
+        this.initialTime = null;
+        this.playedTime = 0;
+        this.gameScore = 0;
+        this.gameOver = false;
 
 
-
-
-
-
-
-
-
+        this.formattedTime = null;
 
 
 
@@ -195,6 +205,9 @@ class Application {
             this.player.controls.enabled = true
             instructions.style.display = 'none'
             this.gameEnable = true;
+            if(this.initialTime === null){
+                this.initialTime = new Date().valueOf();
+            }
         })
 
         this.player.controls.addEventListener('unlock', () => {
@@ -202,6 +215,18 @@ class Application {
             instructions.style.display = null
             this.gameEnable = false;
         })
+
+        this.score = document.createElement('div');
+        this.score.style.position = 'absolute';
+        this.score.style.width = 200;
+        this.score.style.height = 200;
+        this.score.innerHTML = "Score: " + this.gameScore;
+        this.score.style.top = 20 + 'px';
+        this.score.style.left = 200 + 'px';
+        document.body.appendChild(this.score);
+
+        this.gameOverDiv = document.getElementById("gameover")
+        this.gameOverDiv.style.display = 'none';
     }
 
     render() {
@@ -214,9 +239,17 @@ class Application {
             this.renderer.render(this.scene, this.camera);
             this.renderer.render(this.uiScene, this.uiCamera);
             if(this.gameEnable !== false){
-                this.update(t-this.time);
-                this.time = t;
-            }else{
+                if(this.gameOver === true){
+                    this.gameEnable = false;
+                    this.gameOverDiv.style.display = 'inline';
+                    // console.log("Game Over! Tempo Sobrevivido: " + this.playedTime + " Score: " + this.gameScore)
+                }else{
+                    this.update(t-this.time);
+                    this.time = t;
+                    let time = new Date().valueOf();
+                    this.playedTime = (time-this.initialTime)/1000;
+                }
+            }else {
                 this.player.controls.yawObject.rotation.y += 0.1;
             }
         });
@@ -252,12 +285,26 @@ class Application {
         //     this.ballMeshes[i].quaternion.copy(this.balls[i].quaternion)
         //
         // }
+        this.gameScore = this.enemyManager.getGameScore();
+        this.gameOver = this.enemyManager.getGameOver();
+        this.formattedTime = this.getFormattedTime()
+        this.score.innerHTML = "Score: " + this.gameScore + " Tempo Sobrevivido: " + this.formattedTime;
 
         this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);
     }
+
+    getFormattedTime(){
+        let minutes = 0;
+        if(this.playedTime/60 > 0){
+            minutes = parseInt( this.playedTime/60);
+        }
+        let seconds = parseInt(this.playedTime - minutes*60);
+        return "" + minutes + ":" + seconds;
+    }
+
 
     add(mesh) {
         if (Array.isArray(mesh)){
@@ -279,12 +326,42 @@ class Application {
 let app = new Application();
 let objs = [
     new Skybox({width:250,height:250,depth:250},{x:0,y:0,z:0}),
-    new House({x:5,y:1,z:5}, {x:0,y:0,z:0}),
-    new WaterTower({x:0,y:1,z:5}, {x:0,y:0,z:0}),
-    new Container({x:5,y:1.63,z:0}, {x:0,y:0,z:0}),
-    new Sofa({x:8,y:1,z:2}, {x:0,y:0,z:0}),
-    new Stop({x:2,y:1,z:8}, {x:0,y:0,z:0}),
-    new DeadTree({x:0,y:1,z:-8}, {x:0,y:0,z:0},4),
+    new House({x:5.790,y:1,z:-5.900}, {x:0,y:-0.550,z:0}),
+    new WaterTower({x:6.930,y:1,z:6.9}, {x:0,y:0.530,z:0}),
+    new Container({x:-6.360,y:1.63,z:-7.170}, {x:-3.142,y:-0.618,z:-3.142}),
+    new Sofa({x:-6.330,y:1,z:-6.110}, {x:0,y:0,z:0}),
+    new Stop({x:-6.220,y:1.130,z:-6.400}, {x:1.680,y:2.440,z:-0.480}),
+    new DeadTree({x:3.890,y:1,z:-7.360}, {x:0,y:0,z:0},4),
+    new DeadTree({x:1.270,y:1,z:-5.380}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-1.860,y:1,z:-5.380}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-5.380,y:1,z:-5.380}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-3.430,y:1,z:-6.280}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-0.50, y:1,z:-5.380}, {x:0,y:0,z:0},4),
+
+    new DeadTree({x:3.890,y:1,z:7.360}, {x:0,y:0,z:0},4),
+    new DeadTree({x:1.270,y:1,z:5.380}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-1.860,y:1,z:5.380}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-5.380,y:1,z:5.380}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-3.430,y:1,z:6.280}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-0.50, y:1,z:5.380}, {x:0,y:0,z:0},4),
+
+    new DeadTree({x:-6.590, y:1,z:-2.390}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-6.590, y:1,z:-0.210}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-6.590, y:1,z:3.120}, {x:0,y:0,z:0},4),
+    new DeadTree({x:-6.590, y:1,z:-4.760}, {x:0,y:0,z:0},4),
+
+    new DeadTree({x:6.590, y:1,z:-2.390}, {x:0,y:0,z:0},4),
+    new DeadTree({x:6.590, y:1,z:-0.210}, {x:0,y:0,z:0},4),
+    new DeadTree({x:6.590, y:1,z:3.120}, {x:0,y:0,z:0},4),
+    new DeadTree({x:6.590, y:1,z:-4.760}, {x:0,y:0,z:0},4),
+
+
+
+
+
+
+    new WashingMachine({x:-5.440,y:1,z:-6.760}, {x:-3.141,y:2.412,z:3.141}),
+    new Car({x:6.150,y:1,z:6.590}, {x:-3.142,y:0.842,z:-3.142}),
 
 ];
 app.add(objs);
