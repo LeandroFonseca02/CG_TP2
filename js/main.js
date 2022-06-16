@@ -54,7 +54,7 @@ class Application {
         this.world.solver = new CANNON.SplitSolver(solver)
         this.world.solver = solver
 
-        this.world.gravity.set(0, -50, 0)
+        this.world.gravity.set(0, -20, 0)
 
         const physicsMaterial = new CANNON.Material('physics')
         const physics_physics = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {

@@ -98,7 +98,7 @@ export class Player{
     shoot(){
         const shot = new Date().valueOf();
         if(this.lastShot===0 || shot-this.lastShot>300){
-            const shootVelocity = 60
+            const shootVelocity = 30
             const ballShape = new CANNON.Sphere(0.03)
             const ballGeometry = new THREE.SphereBufferGeometry(ballShape.radius, 32, 32)
             const material = new THREE.MeshNormalMaterial();
