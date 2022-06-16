@@ -6,10 +6,10 @@ export class EnemyManager{
         this.scene = scene;
         this.world = world;
         this.player = player;
-        this.spawnTime = 1500;
+        this.spawnTime = 2500;
         this.lastSpawn = 0;
         this.time = 0;
-        this.speed = 0.08;
+        this.speed = 0.03;
         this.spawn = new Spawn(this.player);
         this.enemies = [];
         this.gameScore = 0;

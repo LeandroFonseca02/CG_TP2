@@ -12,7 +12,6 @@ import {
     Car,
     Container,
     DeadTree,
-    Grave,
     House,
     Phone,
     RigidModel,
@@ -88,7 +87,7 @@ class Application {
 
         const material = new THREE.MeshStandardMaterial( {color: 0x434c5e, side: THREE.DoubleSide} );
 
-        const halfExtents = new CANNON.Vec3(100, 1, 100);
+        const halfExtents = new CANNON.Vec3(8, 1, 8);
         const boxShape = new CANNON.Box(halfExtents);
         const boxGeometry = new THREE.BoxBufferGeometry(halfExtents.x * 2, halfExtents.y * 2, halfExtents.z * 2);
         this.boxBody = new CANNON.Body({ mass: 0 })
@@ -136,7 +135,7 @@ class Application {
         this.render();
 
 
-        this.scene.fog = new THREE.FogExp2( 0x4c566a, 0.015);
+        this.scene.fog = new THREE.Fog( 0x4c566a, 5,15);
         this.scene.background=this.scene.fog.color
         this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
 
@@ -290,7 +289,7 @@ class Application {
         this.formattedTime = this.getFormattedTime()
         this.score.innerHTML = "Score: " + this.gameScore + " Tempo Sobrevivido: " + this.formattedTime;
 
-        this.cannonDebugger.update();
+        // this.cannonDebugger.update();
         this.player.update(dt);
         this.stats.update()
         this.world.fixedStep(1/60);

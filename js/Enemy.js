@@ -108,7 +108,7 @@ export class Enemy{
     }
 
     createBody(){
-        const halfExtents = new CANNON.Vec3(0.25, 0.3, 0.25);
+        const halfExtents = new CANNON.Vec3(0.35, 0.4, 0.35);
         const boxShape = new CANNON.Box(halfExtents);
         const boxGeometry = new THREE.BoxBufferGeometry(halfExtents.x * 2, halfExtents.y * 2, halfExtents.z * 2);
         const boxBody = new CANNON.Body({ isTrigger: true})
