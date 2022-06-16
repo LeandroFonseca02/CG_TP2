@@ -1,5 +1,4 @@
 import * as THREE from "./three/three.module.js";
-import {Enemy} from "./Enemy.js";
 
 export class Spawn{
     constructor(player) {
