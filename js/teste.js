@@ -11,7 +11,7 @@ import {Skybox} from "./Objects.js";
 import {
     Car,
     Container,
-    DeadTree, Ground,
+    DeadTree, Fence, Ground,
     House,
     Phone,
     RigidModel,
@@ -355,6 +355,8 @@ let objs = [
 
     new WashingMachine({x:-5.440,y:1,z:-6.760}, {x:-3.141,y:2.412,z:3.141}),
     new Car({x:6.150,y:1,z:6.590}, {x:-3.142,y:0.842,z:-3.142}),
+    new Fence({x:2,y:1,z:0}, {x:0,y:0,z:0}),
+
 
 ];
 app.add(objs);

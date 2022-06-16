@@ -1024,3 +1024,57 @@ export class Ground extends RigidModel{
 
 
 }
+
+export class Fence extends RigidModel{
+    constructor(position, rotation) {
+        super();
+        this.mesh = this.load();
+        this.mesh.position.set(position.x,position.y,position.z);
+        this.mesh.rotation.set(rotation.x,rotation.y,rotation.z);
+        this.mesh.scale.set(0.2,0.2,0.2);
+        this.body = this.createBody();
+
+    }
+
+    load() {
+        let loader = new GLTFLoader(loadingManager);
+        let mesh = new THREE.Mesh();
+
+        loader.load('./models/fence/fence.glb', function (gltf) {
+            gltf.scene.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            })
+            const model = gltf.scene;
+            model.children[0].material.metalness = 0.8;
+            model.position.set(0,0,0);
+            model.rotation.set(0,0,0);
+            model.scale.set(1,1,1);
+            mesh.add(model);
+        }, undefined, function (error) {
+            console.error(error);
+        });
+        return mesh;
+    }
+
+    createBody(){
+        const halfExtents = new CANNON.Vec3(0.2, 0.8, 0.02);
+        const boxShape = new CANNON.Box(halfExtents);
+        const boxBody = new CANNON.Body({ mass: 0})
+        boxBody.addShape(boxShape)
+        boxBody.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        boxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0,1,0), this.mesh.rotation.y)
+        return boxBody;
+    }
+
+    update(){
+    }
+
+    getMesh(){return this.mesh;}
+
+    getBody(){return this.body;}
+
+
+}
