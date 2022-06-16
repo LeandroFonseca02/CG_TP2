@@ -36,7 +36,7 @@ export class EnemyManager{
         for (let i = 0; i < this.enemies.length; i++) {
             if(this.enemies[i].isAlive === false){
                 this.enemies.splice(i,1);
-                this.gameScore += 100;
+                this.gameScore += 100 + this.minutesPlayed*10;
             }else if(this.enemies[i].playerDead === true){
                 this.gameOver = true;
             }else {

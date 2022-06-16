@@ -1006,7 +1006,7 @@ export class Ground extends RigidModel{
     }
 
     createBody(){
-        const halfExtents = new CANNON.Vec3(8, 1, 8);
+        const halfExtents = new CANNON.Vec3(12, 1, 12);
         const boxShape = new CANNON.Box(halfExtents);
         const boxBody = new CANNON.Body({ mass: 0})
         boxBody.addShape(boxShape)

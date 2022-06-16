@@ -46,14 +46,14 @@ class Application {
         this.renderer.autoClear = false;
         this.renderer.info.autoReset = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.shadowMap.enabled = false;
+        this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
         this.renderer.physicallyCorrectLights = true;
         this.renderer.setClearColor(0xcccccc);
         document.body.appendChild(this.renderer.domElement);
         this.stats = Stats()
         document.body.appendChild(this.stats.dom)
-        this.renderer.domElement.style.width = 99.2 + "%";
+        this.renderer.domElement.style.width = 98 + "%";
         this.renderer.domElement.style.height = 85 + "%";
 
         this.world = new CANNON.World();
@@ -110,25 +110,25 @@ class Application {
         hemiLight.position.set(0, 500, 0);
 
         var dirLight = new THREE.DirectionalLight(0xffffff, 2);
-        dirLight.position.set(-2.3, 3, 3);
+        dirLight.position.set(-7, 10, 11);
 
-        dirLight.position.multiplyScalar(50);
+        // dirLight.position.multiplyScalar(50);
         dirLight.name = "dirlight";
 
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 1024 * 2;
 
-        var d = 350;
+        var d = 30;
 
         dirLight.shadow.camera.left = -d;
         dirLight.shadow.camera.right = d;
         dirLight.shadow.camera.top = d;
         dirLight.shadow.camera.bottom = -d;
+        //
+        dirLight.shadow.camera.near = 0.001; // default
+        dirLight.shadow.camera.far = 150;
+        dirLight.shadow.bias = 0.00001;
 
-        dirLight.shadow.camera.far = 3500;
-        dirLight.shadow.bias = -0.0001;
-        dirLight.shadow.mapSize.width = 512 * 4;
-        dirLight.shadow.mapSize.height = 512 * 4;
 
         this.scene.add(dirLight);
         this.scene.add(hemiLight);
@@ -137,7 +137,7 @@ class Application {
         this.render();
 
 
-        this.scene.fog = new THREE.Fog( 0x4c566a, 5,15);
+        this.scene.fog = new THREE.Fog( 0x4c566a, 5,18);
         this.scene.background=this.scene.fog.color
         this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
 
@@ -250,17 +250,10 @@ class Application {
         const dt = time - lastCallTime
         lastCallTime = time
         this.objects.forEach((object) => {
-            // if(object instanceof Enemy){
-            //     object.update(dt,this.player.controls.yawObject);
-            // }else if(object instanceof AnimatedModel){
-            //     object.update(delta);
-            // } else{
             object.update();
         });
 
-        // this.boxMesh.position.copy(this.boxBody.position);
-        // this.enemyManager.update(dt, delta, this.playedTime)
-        // this.boxMesh.quaternion.copy(this.boxBody.quaternion);
+        this.enemyManager.update(dt, delta, this.playedTime)
 
 
         this.gameScore = this.enemyManager.getGameScore();
