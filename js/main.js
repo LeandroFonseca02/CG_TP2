@@ -44,8 +44,6 @@ class Application {
         this.addLights();
         this.createUI();
 
-        this.world.defaultContactMaterial.friction = 1;
-
         this.player = new Player(this.camera,this.scene,this.world);
         this.scene.add(this.player.getMesh())
         this.world.addBody(this.player.getBody())
@@ -90,6 +88,7 @@ class Application {
             this.player.controls.enabled = false
             instructions.style.display = null
             this.gameEnable = false;
+            this.initialTime = null;
         })
 
     }
@@ -206,7 +205,8 @@ class Application {
                     this.update(t-this.time);
                     this.time = t;
                     let time = new Date().valueOf();
-                    this.playedTime = (time-this.initialTime)/1000;
+                    this.playedTime += (time-this.initialTime)/1000;
+                    this.initialTime = time;
                 }
             }else {
                 this.player.controls.yawObject.rotation.y += 0.1;

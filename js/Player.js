@@ -25,7 +25,7 @@ export class Player{
         const sphereShape = new CANNON.Sphere(this.radius)
         const sphereBody = new CANNON.Body({ mass: 5})
         sphereBody.addShape(sphereShape)
-        sphereBody.position.set(0, 5, 0)
+        sphereBody.position.set(0, 2, 0)
         sphereBody.linearDamping = 0.9
         return  sphereBody;
     }
