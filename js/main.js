@@ -39,64 +39,16 @@ class Application {
         document.body.appendChild(this.renderer.domElement);
         this.stats = Stats()
         document.body.appendChild(this.stats.dom)
-        this.renderer.domElement.style.width = 98 + "%";
-        this.renderer.domElement.style.height = 85 + "%";
 
-        this.world = new CANNON.World();
-        this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
-        this.world.defaultContactMaterial.contactEquationRelaxation = 4
+        this.createWorld();
+        this.addLights();
+        this.createUI();
 
-        this.cannonDebugger = new CannonDebugger(this.scene, this.world);
-
-        const solver = new CANNON.GSSolver()
-        solver.iterations = 7
-        solver.tolerance = 0.1
-        this.world.solver = new CANNON.SplitSolver(solver)
-        this.world.solver = solver
-
-        this.world.gravity.set(0, -20, 0)
-
-        const physicsMaterial = new CANNON.Material('physics')
-        const physics_physics = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {
-            friction: 1.0,
-            restitution: 0.3,
-        })
-
-        this.world.addContactMaterial(physics_physics);
-
+        this.world.defaultContactMaterial.friction = 1;
 
         this.player = new Player(this.camera,this.scene,this.world);
         this.scene.add(this.player.getMesh())
         this.world.addBody(this.player.getBody())
-
-        let ambientLight = new THREE.AmbientLight(0xfdffe1, 0.4);
-
-        let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
-        hemiLight.position.set(0, 500, 0);
-
-        let dirLight = new THREE.DirectionalLight(0xffffff, 2);
-        dirLight.position.set(-7, 10, 11);
-
-        dirLight.name = "dirlight";
-
-        dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 512 * 2;
-
-        let d = 30;
-
-        dirLight.shadow.camera.left = -d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = -d;
-        //
-        dirLight.shadow.camera.near = 0.001; // default
-        dirLight.shadow.camera.far = 150;
-        dirLight.shadow.bias = -0.00001;
-
-
-        this.scene.add(dirLight);
-        this.scene.add(hemiLight);
-        this.scene.add(ambientLight)
 
         this.render();
 
@@ -104,30 +56,6 @@ class Application {
         this.scene.fog = new THREE.Fog( 0x4c566a, 5,18);
         this.scene.background=this.scene.fog.color
         this.enemyManager = new EnemyManager(this.scene, this.world, this.player)
-
-        this.uiScene = new THREE.Scene();
-        this.uiCamera = new THREE.OrthographicCamera(
-            -1, 1, this.camera.aspect, -1 * this.camera.aspect, 1, 1000);
-
-        let mapLoader = new THREE.TextureLoader()
-        const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
-        const crosshair = mapLoader.load('./textures/crosshair/crosshair.png');
-        crosshair.anisotropy = maxAnisotropy;
-
-        this.sprite_ = new THREE.Sprite(
-            new THREE.SpriteMaterial({map: crosshair, color: 0xffffff, fog: false, depthTest: false, depthWrite: false}));
-        this.sprite_.scale.set(0.05, 0.085*this.camera.aspect, 1)
-        this.sprite_.position.set(0, 0, -10);
-
-        this.uiScene.add(this.sprite_);
-
-        this.initialTime = null;
-        this.playedTime = 0;
-        this.gameScore = 0;
-        this.gameOver = false;
-
-
-        this.formattedTime = null;
 
 
         window.addEventListener('click', (event) => {
@@ -163,6 +91,88 @@ class Application {
             instructions.style.display = null
             this.gameEnable = false;
         })
+
+    }
+
+    addLights(){
+        let ambientLight = new THREE.AmbientLight(0xfdffe1, 0.4);
+
+        let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+        hemiLight.position.set(0, 500, 0);
+
+        let dirLight = new THREE.DirectionalLight(0xffffff, 2);
+        dirLight.position.set(-7, 10, 11);
+
+        dirLight.name = "dirlight";
+
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 512 * 2;
+
+        let d = 30;
+
+        dirLight.shadow.camera.left = -d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = -d;
+        //
+        dirLight.shadow.camera.near = 0.001;
+        dirLight.shadow.camera.far = 150;
+        dirLight.shadow.bias = -0.00001;
+
+
+        this.scene.add(dirLight);
+        this.scene.add(hemiLight);
+        this.scene.add(ambientLight)
+    }
+
+    createWorld(){
+        this.world = new CANNON.World();
+        this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
+        this.world.defaultContactMaterial.contactEquationRelaxation = 4
+
+        this.cannonDebugger = new CannonDebugger(this.scene, this.world);
+
+        const solver = new CANNON.GSSolver()
+        solver.iterations = 7
+        solver.tolerance = 0.1
+        this.world.solver = new CANNON.SplitSolver(solver)
+        this.world.solver = solver
+
+        this.world.gravity.set(0, -20, 0)
+
+        const physicsMaterial = new CANNON.Material('physics')
+        const physics_physics = new CANNON.ContactMaterial(physicsMaterial, physicsMaterial, {
+            friction: 1.0,
+            restitution: 0.3,
+        })
+
+        this.world.addContactMaterial(physics_physics);
+    }
+
+    createUI(){
+        this.uiScene = new THREE.Scene();
+        this.uiCamera = new THREE.OrthographicCamera(
+            -1, 1, this.camera.aspect, -1 * this.camera.aspect, 1, 1000);
+
+        let mapLoader = new THREE.TextureLoader()
+        const maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
+        const crosshair = mapLoader.load('./textures/crosshair/crosshair.png');
+        crosshair.anisotropy = maxAnisotropy;
+
+        this.sprite_ = new THREE.Sprite(
+            new THREE.SpriteMaterial({map: crosshair, color: 0xffffff, fog: false, depthTest: false, depthWrite: false}));
+        this.sprite_.scale.set(0.05, 0.085*this.camera.aspect, 1)
+        this.sprite_.position.set(0, 0, -10);
+
+        this.uiScene.add(this.sprite_);
+
+        this.initialTime = null;
+        this.playedTime = 0;
+        this.gameScore = 0;
+        this.gameOver = false;
+
+
+        this.formattedTime = null;
 
         this.score = document.createElement('div');
         this.score.style.position = 'absolute';
