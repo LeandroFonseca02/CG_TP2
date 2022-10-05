@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<base href=".">
+<head>
+    <title>Three.js - Computacao Grafica TP2</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .progress-bar-container{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,100);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #progress-bar{
+            width: 30%;
+            margin-top: 0.5%;
+            height: 2%;
+        }
+        label{
+            color: white;
+            font-size: 2rem;
+        }
+        #instructions {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            background-color: rgba(0,0,0,100);
+            color: #ffffff;
+            text-align: center;
+
+            cursor: pointer;
+        }
+        #instructions span {
+            font-size: 40px;
+        }
+        #gameover {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            background-color: rgba(0,0,0,100);
+            color: #ffffff;
+            text-align: center;
+
+            cursor: pointer;
+        }
+        #gameover span {
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div id="instructions">
+    <span>Click para Jogar</span>
+    <br />
+    (W,A,S,D = Andar, SPACE = Saltar, MOUSE = Virar a face, CLICK = Disparar)
+
+</div>
+<div id="gameover" value="">
+    <span>Game Over</span>
+    <br>
+    <br>Voce foi possuido por um fantasma!
+    <br>
+    <input type="button" value="Tentar Novamente" onClick="window.location.reload(true)">
+</div>
+<div class="progress-bar-container">
+    <label for="progress-bar">Loading...</label>
+    <progress id="progress-bar" value="0" max="100"></progress>
+</div>
+<script type="importmap">
+                {
+                    "imports": {
+                        "three": "./js/three/three.module.js"
+                    }
+                }
+    </script>
+<script type="module" src="js/main.js"></script>
+</body>
